@@ -29,7 +29,6 @@ db.once('open', () => {
 app.post('/signup', async (req, res) => {
   const { name, username, password } = req.body;
   try {
-    console.log("dsadsf");
     const newUser = await User.create({
       name: name, 
       username: username,
@@ -77,8 +76,6 @@ app.get("/allUsers", async(req, res) => {
     res.status(400).json({ e }); 
   }
 })
-
-
 
 app.listen(3001, () => {
     console.log("Server is on port 3001..")
