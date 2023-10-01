@@ -1,8 +1,20 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose"); 
+const bcrypt = require("bcrypt");
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const User = require("./models/User.js");
 
 mongoose.connect('mongodb+srv://pranetallu:2LJEQQ8JE7EISp0s@cluster0.fskrd0v.mongodb.net/');
+
+const salt = bcrypt.genSaltSync(10);
+const secret = 'dsadsaewqerffrfrgrgrgbth5657';
+
+app.use(express.json()); // parses reequest JSON data 
+
+app.use(cookieParser()); // cookie parser
+
 
 const db = mongoose.connection;
 
@@ -13,6 +25,59 @@ db.on('error', (error) => {
 db.once('open', () => {
   console.log('MongoDB connection successful');
 });
+
+app.post('/signup', async (req, res) => {
+  const { name, username, password } = req.body;
+  try {
+    console.log("dsadsf");
+    const newUser = await User.create({
+      name: name, 
+      username: username,
+      password: password
+    });
+    res.status(201).json({ newUser });
+  }
+  catch (e) {
+    res.status(400).json( "dfsdfds" );
+  }
+})
+
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  const userDoc = await User.findOne({ username });
+  const passAuthen = userDoc.password;
+  if (passAuthen) {
+    jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
+      if (err) {
+        throw err;
+      }
+      else {
+        res.cookie('token', token).json({
+          id: userDoc._id,
+          username
+        });
+      }
+    });
+  }
+  else {
+    res.status(400).json("invalid username/password")
+  }
+})
+
+app.post('/logout', (req, res) => {
+  res.cookie('token', '').json('logged out');
+})
+
+app.get("/allUsers", async(req, res) => {
+  try {
+    const userList = await User.find();
+    res.status(201).json({userList}); 
+  }
+  catch(e) {
+    res.status(400).json({ e }); 
+  }
+})
+
 
 
 app.listen(3001, () => {
