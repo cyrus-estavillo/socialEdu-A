@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors');
 const app = express();
 const mongoose = require("mongoose"); 
 const bcrypt = require("bcrypt");
@@ -10,6 +11,12 @@ mongoose.connect('mongodb+srv://pranetallu:2LJEQQ8JE7EISp0s@cluster0.fskrd0v.mon
 
 const salt = bcrypt.genSaltSync(10);
 const secret = 'dsadsaewqerffrfrgrgrgbth5657';
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+  allowedHeaders: 'Content-Type'
+}));
 
 app.use(express.json()); // parses reequest JSON data 
 
@@ -44,8 +51,11 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const userDoc = await User.findOne({ username });
-  const passAuthen = userDoc.password;
-  if (passAuthen) {
+  if(!userDoc) {
+    res.status(404).json("Invalid username");
+    return; 
+  } 
+  if (password === userDoc.password) {
     jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
       if (err) {
         throw err;
@@ -59,7 +69,7 @@ app.post('/login', async (req, res) => {
     });
   }
   else {
-    res.status(400).json("invalid username/password")
+    res.status(400).json("Invalid Password")
   }
 })
 
