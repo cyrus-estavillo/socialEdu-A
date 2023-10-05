@@ -37,7 +37,7 @@ app.post('/signup', async (req, res) => {
     res.status(201).json({ newUser });
   }
   catch (e) {
-    res.status(400).json( "dfsdfds" );
+    res.status(400).json( "Use different username / password" );
   }
 })
 
