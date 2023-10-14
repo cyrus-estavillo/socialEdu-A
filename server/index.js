@@ -1,13 +1,16 @@
 const express = require("express");
 const cors = require('cors');
 const app = express();
-const mongoose = require("mongoose"); 
+const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const User = require("./models/User.js");
+const Post = require("./models/Post.js");
 
 mongoose.connect('mongodb+srv://pranetallu:2LJEQQ8JE7EISp0s@cluster0.fskrd0v.mongodb.net/');
+
+// 'mongodb+srv://pranetallu:2LJEQQ8JE7EISp0s@cluster0.fskrd0v.mongodb.net/'
 
 const salt = bcrypt.genSaltSync(10);
 const secret = 'dsadsaewqerffrfrgrgrgbth5657';
@@ -37,24 +40,24 @@ app.post('/signup', async (req, res) => {
   const { name, username, password } = req.body;
   try {
     const newUser = await User.create({
-      name: name, 
+      name: name,
       username: username,
       password: password
     });
     res.status(201).json({ newUser });
   }
   catch (e) {
-    res.status(400).json( "Use different username / password" );
+    res.status(400).json("Use different username / password");
   }
 })
 
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const userDoc = await User.findOne({ username });
-  if(!userDoc) {
+  if (!userDoc) {
     res.status(404).json("Invalid username");
-    return; 
-  } 
+    return;
+  }
   if (password === userDoc.password) {
     jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
       if (err) {
@@ -77,20 +80,53 @@ app.post('/logout', (req, res) => {
   res.cookie('token', '').json('logged out');
 })
 
-app.get("/allUsers", async(req, res) => {
+app.get("/allUsers", async (req, res) => {
   try {
     const userList = await User.find();
-    res.status(201).json({userList}); 
+    res.status(201).json({ userList });
   }
-  catch(e) {
-    res.status(400).json({ e }); 
+  catch (e) {
+    res.status(400).json({ e });
+  }
+})
+
+app.post("/post", async (req, res) => {
+  const { token } = req.cookies;
+  const { text } = req.body;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const postSpecific = await Post.create({
+          text: text,
+          author: info.id
+        });
+        res.status(201).json({ postSpecific });
+      }
+      catch (e) {
+        res.status(400).json("Error with Posting");
+      }
+    }
+  })
+})
+
+app.get("/allPost", async (req, res) => {
+  try {
+    const postLists = await Post.find();
+    res.status(201).json({ postLists });
+  }
+  catch (e) {
+    res.status(400).json({ e });
   }
 })
 
 app.listen(3001, () => {
-    console.log("Server is on port 3001..")
+  console.log("Server is on port 3001..")
 })
 
 
-  // pranetallu
-  // 2LJEQQ8JE7EISp0s
+// pranetallu
+// 2LJEQQ8JE7EISp0s
