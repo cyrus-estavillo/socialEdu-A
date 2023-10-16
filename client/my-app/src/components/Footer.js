@@ -26,7 +26,7 @@ const Footer = () => {
     const [value, setValue] = React.useState(0);
     const username = userInfo?.username;
     return (
-        <div style={{ position: "fixed" }}>
+        <div style={{ position: "fixed", height: "30%", minHeight: "150px" }}>
             {username && ((
                 <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
                     <BottomNavigation
