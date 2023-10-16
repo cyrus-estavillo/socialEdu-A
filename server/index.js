@@ -123,7 +123,7 @@ app.get("/allPost", async (req, res) => {
   }
 })
 
-app.post("/addFollowers/:id", async (req, res) => {
+app.post("/addFollowing/:id", async (req, res) => {
   const { id } = req.params;
   const { token } = req.cookies;
   jwt.verify(token, secret, {}, async (err, info) => {
