@@ -123,6 +123,28 @@ app.get("/allPost", async (req, res) => {
   }
 })
 
+app.post("/addFollowers/:id", async (req, res) => {
+  const { id } = req.params;
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        userSpecific.following.push(id);
+        await userSpecific.save();
+        res.status(201).json(`Added to Following ${id}`)
+      }
+      catch (e) {
+        res.status(400).json("Error with Adding Followers");
+      }
+    }
+  })
+})
+
 app.listen(3001, () => {
   console.log("Server is on port 3001..")
 })
