@@ -13,20 +13,24 @@ import { UserContext } from "../components/UserContext";
 
 const Home = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = React.useState(1);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
     return (
-        <div style={{height: "50%", minHeight: "500px" }}>
+        <div style={{ height: "50%", minHeight: "500px" }}>
             <Box sx={{ width: '100%', typography: 'body1' }}>
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <TabList onChange={handleChange} aria-label="lab API tabs example" centered>
-                            <Tab label="Following" value="1" sx={{marginRight: 30}}/>
-                            <Tab label="For You" value="2" sx={{marginRight: 30}}/>
+                        <TabList
+                            onChange={handleChange}
+                            aria-label="lab API tabs example"
+                            centered
+                        >
+                            <Tab label="Following" value="1" />
+                            <Tab label="For You" value="2" sx={{marginLeft: 16, marginRight: 16}}/>
                             <Tab label="Community" value="3" />
                         </TabList>
                     </Box>

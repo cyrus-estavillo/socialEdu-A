@@ -48,11 +48,11 @@ const Header = () => {
                 (<div style={{
                     minHeight: "80px", height: "40%", display: "flex",
                     alignContent: "center", alignItems: "center", justifyContent: "space-between",
-                    paddingTop: "20px", paddingRight: "8px", paddingLeft: "8px", paddingBottom: "30px"
+                    paddingTop: "20px", paddingBottom: "30px", paddingLeft: "120px", paddingRight: "40px"
                 }}>
                     <div></div>
                     <img src={Logo} style={{ width: 100, height: 90 }}></img>
-                    <Button variant="contained" href="/" onClick={logout} sx={{ }}>Logout</Button>
+                    <Button variant="contained" href="/" onClick={logout} sx={{}}>Logout</Button>
                 </div>
                 )}
 

@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const User = require("./models/User.js");
 const Post = require("./models/Post.js");
+const Comment = require("./models/Comment.js");
 
 mongoose.connect('mongodb+srv://pranetallu:2LJEQQ8JE7EISp0s@cluster0.fskrd0v.mongodb.net/');
 
@@ -121,6 +122,86 @@ app.get("/allPost", async (req, res) => {
   catch (e) {
     res.status(400).json({ e });
   }
+})
+
+app.post("/like/:id", async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const postSpecific = await Post.findById(id);
+        const userSpecific = await User.findById(info.id);
+        if (userSpecific.liked.includes(postSpecific._id)) {
+          res.status(400).json("User already liked the post");
+          return;
+        }
+
+        postSpecific.likes = postSpecific.likes + 1;
+        userSpecific.liked.push(id);
+
+        await userSpecific.save();
+        await postSpecific.save();
+
+        res.status(201).json("Successfully liked the post");
+      }
+      catch (e) {
+        res.status(400).json("Error with Liking the Post");
+      }
+    }
+  })
+})
+
+app.get("/comment", async (req, res) => {
+  try {
+    const commentList = Comment.find();
+    res.status(201).json(commentList);
+  }
+  catch (e) {
+    res.status(400).json("Error retrieving comments");
+  }
+})
+
+app.get("/comment/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const commentSpecific = Comment.find(id);
+    res.status(201).json(commentSpecific);
+  }
+  catch(e) {
+    res.status(400).json("Error retrieving the comment")
+  }
+})
+
+app.post("/comment/:id", async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  const { text } = req.body;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const postSpecific = await Post.findById(id);
+        const commentSpecific = await Comment.create({
+          text: text,
+          commentPerson: info.id
+        });
+        postSpecific.comment.push(commentSpecific._id);
+        await postSpecific.save();
+        res.status(201).json("Successfully commented")
+      }
+      catch (e) {
+        res.status(400).json("Error with Commenting");
+      }
+    }
+  })
 })
 
 app.post("/addFollowing/:id", async (req, res) => {

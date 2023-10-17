@@ -20,13 +20,69 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import EmojiObjectsRoundedIcon from '@mui/icons-material/EmojiObjectsRounded';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 
 const Footer = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
     const [value, setValue] = React.useState(0);
+    const [open, setOpen] = useState(false);
+    const [textVal, setText] = useState("");
+
     const username = userInfo?.username;
+    const idVal = userInfo?._id;
+
+    const handleClose = () => {
+        setText(""); 
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    const addPost = async () => {
+        const response = await fetch('http://localhost:3001/post', {
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+            body: JSON.stringify({
+                text: textVal,
+                author: idVal
+            })
+        });
+        if(response.ok) {
+            handleClose();
+        }
+        else {
+            alert("Adding Unsuccessful");
+        }
+    }
+
     return (
         <div style={{ position: "fixed", height: "30%", minHeight: "150px" }}>
+            <Dialog
+                open={open}
+                onClose={handleClose}>
+                <DialogTitle sx={{ fontWeight: "bold", textAlign: "center" }}>
+                    Add a Post!
+                </DialogTitle>
+                <DialogContent >
+                    <TextField sx={{ width: 400 }}
+                        multiline
+                        value={textVal}
+                        onChange={(e) => setText(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button variant="contained" onClick={addPost}>Post</Button>
+                </DialogActions>
+            </Dialog>
             {username && ((
                 <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
                     <BottomNavigation
@@ -35,13 +91,13 @@ const Footer = () => {
                         onChange={(event, newValue) => {
                             setValue(newValue);
                         }}
-                        sx={{backgroundColor: "black"}}
+                        sx={{ backgroundColor: "black" }}
                     >
-                        <BottomNavigationAction icon={<HomeRoundedIcon sx={{color: "white"}} />}/>
-                        <BottomNavigationAction icon={<SearchRoundedIcon sx={{color: "white"}} />} />
-                        <BottomNavigationAction icon={<EmojiObjectsRoundedIcon sx={{color: "white"}} />} />
-                        <BottomNavigationAction icon={<NotificationsRoundedIcon sx={{color: "white"}} />} />
-                        <BottomNavigationAction icon={<AccountCircleRoundedIcon sx={{color: "white"}} />} />
+                        <BottomNavigationAction icon={<HomeRoundedIcon sx={{ color: "white" }} />} />
+                        <BottomNavigationAction icon={<SearchRoundedIcon sx={{ color: "white" }} />} />
+                        <BottomNavigationAction onClick={handleOpen} icon={<EmojiObjectsRoundedIcon sx={{ color: "white" }} />} />
+                        <BottomNavigationAction icon={<NotificationsRoundedIcon sx={{ color: "white" }} />} />
+                        <BottomNavigationAction icon={<AccountCircleRoundedIcon sx={{ color: "white" }} />} />
                     </BottomNavigation>
                 </Paper>
             ))}
