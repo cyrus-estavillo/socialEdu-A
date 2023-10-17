@@ -1,0 +1,17 @@
+When a User likes a post, their username/userID is stored in the post Object (stored in Array).
+
+The Author of the post will receive notifications by going into Array, retreiving stored username of User who liked, and formatting "[User] liked your post."
+
+
+When a User wants to like or dislike a post, we will:
+- check to see if the user has already liked post
+- if yes:
+    - remove userID from post 'like' history
+    - update number of likes by taking size of Like Array
+    - (Later) remove notification from Author's notification section
+
+- else:
+    - store user ID into post history
+    - update like number for post in backend and frontend
+    - change status of "Like" heart icon for user
+    - (Later) notify Author of post
