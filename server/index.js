@@ -169,7 +169,11 @@ app.post("/dislike/:id", async (req, res) => {
         const postSpecific = await Post.findById(id);
         const userSpecific = await User.findById(info.id);
         if (userSpecific.liked.includes(postSpecific._id)) {
-          userSpecific.liked = userSpecific.liked.filter((postId) => postId !== postSpecific._id);
+          console.log(userSpecific.liked)
+          console.log(userSpecific.liked[0], postSpecific._id)
+          console.log(userSpecific.liked[0] === postSpecific._id)
+          userSpecific.liked = userSpecific.liked.filter((postId) => postId.toString() !== postSpecific._id.toString());
+          console.log(userSpecific.liked)
           postSpecific.likes = postSpecific.likes - 1;
           await userSpecific.save();
           await postSpecific.save();
