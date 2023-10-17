@@ -47,7 +47,7 @@ app.post('/signup', async (req, res) => {
     });
     res.status(201).json({ newUser });
   }
-  catch (e) {
+  catch (e) { // if username already exists
     res.status(400).json("Use different username / password");
   }
 })
@@ -55,11 +55,11 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const userDoc = await User.findOne({ username });
-  if (!userDoc) {
+  if (!userDoc) { // if username does not exist
     res.status(404).json("Invalid username");
     return;
   }
-  if (password === userDoc.password) {
+  if (password === userDoc.password) { // if password is correct
     jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
       if (err) {
         throw err;
@@ -95,11 +95,11 @@ app.post("/post", async (req, res) => {
   const { token } = req.cookies;
   const { text } = req.body;
   jwt.verify(token, secret, {}, async (err, info) => {
-    if (err) {
+    if (err) { // if user is not logged in
       res.status(404).json("User Not Logged in");
       return;
     }
-    else {
+    else {  // user loggin in
       try {
         const postSpecific = await Post.create({
           text: text,
@@ -136,21 +136,20 @@ app.post("/like/:id", async (req, res) => {
       try {
         const postSpecific = await Post.findById(id);
         const userSpecific = await User.findById(info.id);
-        if (userSpecific.liked.includes(postSpecific._id)) {
-          userSpecific.liked = userSpecific.liked.filter((postId) => postId.toString() !== postSpecific._id.toString());
-          postSpecific.likes = postSpecific.likes - 1;
-          await userSpecific.save();
-          await postSpecific.save();
+        if (userSpecific.liked.includes(postSpecific._id)) { // if user has already liked the post
+          userSpecific.liked = userSpecific.liked.filter((postId) => postId.toString() !== postSpecific._id.toString()); // remove the post from liked array
+          postSpecific.likes = postSpecific.likes - 1; // decrement the likes
+          await userSpecific.save(); // update user info
+          await postSpecific.save(); // update post information
           res.status(201).json("User disliked the post");
           return;
         }
 
-        postSpecific.likes = postSpecific.likes + 1;
-        userSpecific.liked.push(id);
-
-        await userSpecific.save();
-        await postSpecific.save();
-
+        userSpecific.liked.push(id); // add the post to liked array of user's account
+        postSpecific.likes = postSpecific.likes + 1; // increment the likes
+        
+        await userSpecific.save(); // update user info
+        await postSpecific.save(); // update post information
         res.status(201).json("Successfully liked the post");
       }
       catch (e) {
