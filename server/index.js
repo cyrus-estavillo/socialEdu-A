@@ -156,6 +156,37 @@ app.post("/like/:id", async (req, res) => {
   })
 })
 
+app.post("/dislike/:id", async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const postSpecific = await Post.findById(id);
+        const userSpecific = await User.findById(info.id);
+        if (userSpecific.liked.includes(postSpecific._id)) {
+          userSpecific.liked = userSpecific.liked.filter((postId) => postId !== postSpecific._id);
+          postSpecific.likes = postSpecific.likes - 1;
+          await userSpecific.save();
+          await postSpecific.save();
+
+          res.status(201).json("Successfully disliked the post");
+        }
+        else {
+          res.status(400).json("User did not like it")
+        }
+      }
+      catch (e) {
+        res.status(400).json("Error with Disliking the Post");
+      }
+    }
+  })
+})
+
 app.get("/comment", async (req, res) => {
   try {
     const commentList = Comment.find();
@@ -172,7 +203,7 @@ app.get("/comment/:id", async (req, res) => {
     const commentSpecific = Comment.find(id);
     res.status(201).json(commentSpecific);
   }
-  catch(e) {
+  catch (e) {
     res.status(400).json("Error retrieving the comment")
   }
 })
