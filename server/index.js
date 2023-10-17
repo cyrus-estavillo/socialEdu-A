@@ -137,7 +137,11 @@ app.post("/like/:id", async (req, res) => {
         const postSpecific = await Post.findById(id);
         const userSpecific = await User.findById(info.id);
         if (userSpecific.liked.includes(postSpecific._id)) {
-          res.status(400).json("User already liked the post");
+          userSpecific.liked = userSpecific.liked.filter((postId) => postId.toString() !== postSpecific._id.toString());
+          postSpecific.likes = postSpecific.likes - 1;
+          await userSpecific.save();
+          await postSpecific.save();
+          res.status(201).json("User disliked the post");
           return;
         }
 
@@ -151,41 +155,6 @@ app.post("/like/:id", async (req, res) => {
       }
       catch (e) {
         res.status(400).json("Error with Liking the Post");
-      }
-    }
-  })
-})
-
-app.post("/dislike/:id", async (req, res) => {
-  const { token } = req.cookies;
-  const { id } = req.params;
-  jwt.verify(token, secret, {}, async (err, info) => {
-    if (err) {
-      res.status(404).json("User Not Logged in");
-      return;
-    }
-    else {
-      try {
-        const postSpecific = await Post.findById(id);
-        const userSpecific = await User.findById(info.id);
-        if (userSpecific.liked.includes(postSpecific._id)) {
-          console.log(userSpecific.liked)
-          console.log(userSpecific.liked[0], postSpecific._id)
-          console.log(userSpecific.liked[0] === postSpecific._id)
-          userSpecific.liked = userSpecific.liked.filter((postId) => postId.toString() !== postSpecific._id.toString());
-          console.log(userSpecific.liked)
-          postSpecific.likes = postSpecific.likes - 1;
-          await userSpecific.save();
-          await postSpecific.save();
-
-          res.status(201).json("Successfully disliked the post");
-        }
-        else {
-          res.status(400).json("User did not like it")
-        }
-      }
-      catch (e) {
-        res.status(400).json("Error with Disliking the Post");
       }
     }
   })
