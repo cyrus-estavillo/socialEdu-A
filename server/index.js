@@ -116,7 +116,7 @@ app.post("/post", async (req, res) => {
 
 app.get("/allPost", async (req, res) => {
   try {
-    const postLists = await Post.find();
+    const postLists = await Post.find().sort({date: -1, timestamp: -1});
     res.status(201).json({ postLists });
   }
   catch (e) {

@@ -25,11 +25,14 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Stack from "@mui/material/Stack"
 
-const Post = () => {
+const Post = (props) => {
     return(
         <div>
-            
+            <Stack direction="row">
+
+            </Stack>
         </div>
     )
 }
