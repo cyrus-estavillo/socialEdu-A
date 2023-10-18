@@ -13,7 +13,6 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Logo from "../images/WISRR_Logo_Square.jpeg"
 import Paper from '@mui/material/Paper';
 import RestoreIcon from '@mui/icons-material/Restore';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -33,8 +32,11 @@ import Typography from '@mui/material/Typography';
 import { CardActionArea, CardActions } from '@mui/material';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const Post = (props) => {
+    const { userInfo } = useContext(UserContext);
     const [user, setUser] = useState({
         _id: "",
         name: "",
@@ -43,11 +45,42 @@ const Post = (props) => {
         following: [],
         liked: [],
     });
+    const [likedPost, setLike] = useState(false); 
 
     const authorID = props.authorID;
-    console.log(authorID);
+    const postID = props.postID;
 
-    const getAuthorPost = async () => {
+    const getAllLikedPosts = async () => {
+        const response = await fetch(`http://localhost:3001/userLikedPosts/${userInfo.id}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        console.log(data.likedP)
+        if(data.likedP.includes(postID)) {
+            setLike(true);
+        }
+        else {
+            setLike(false); 
+        }
+    };
+
+    useEffect(() => {
+        getAllLikedPosts();
+    }, [])
+
+    const likeButtonClick = async () => {
+        const response = await fetch(`http://localhost:3001/like/${postID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        window.location.reload();
+    }
+
+    const getAuthorDetailsOfPost = async () => {
         const response = await fetch(`http://localhost:3001/user/${authorID}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
@@ -55,11 +88,10 @@ const Post = (props) => {
         })
         const data = await response.json();
         setUser(data.userSpecific);
-        console.log(data);
     }
 
     useEffect(() => {
-        getAuthorPost();
+        getAuthorDetailsOfPost();
     }, [])
 
     //console.log(user?.name);
@@ -78,7 +110,8 @@ const Post = (props) => {
                     </Stack>
                     <CardActions sx={{ justifyContent: "space-evenly" }}>
                         <IconButton><ForumOutlinedIcon /></IconButton>
-                        <IconButton><FavoriteBorderOutlinedIcon /></IconButton>
+                        {likedPost && (<IconButton onClick={likeButtonClick}><FavoriteIcon sx={{color: "red"}} /></IconButton>)}
+                        {!likedPost && (<IconButton onClick={likeButtonClick}><FavoriteBorderIcon /></IconButton>)}
                     </CardActions>
                 </CardContent>
             </Card>

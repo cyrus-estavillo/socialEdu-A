@@ -54,7 +54,7 @@ const Home = () => {
                     </Box>
                     <TabPanel value="1">
                         {posts.map((post) => (
-                            <Post authorID={post.author} text={post.text}/>
+                            <Post postID={post._id} authorID={post.author} text={post.text}/>
                         ))}
                     </TabPanel>
                     <TabPanel value="2">Item Two</TabPanel>

@@ -148,6 +148,18 @@ app.get("/allPost", async (req, res) => {
   }
 })
 
+app.get("/userLikedPosts/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const likedPosts = await User.findById(id);
+    const likedP = likedPosts.liked; 
+    res.status(201).json({ likedP });
+  }
+  catch (e) {
+    res.status(400).json("Could not retrieve liked posts");
+  }
+})
+
 app.post("/like/:id", async (req, res) => {
   const { token } = req.cookies;
   const { id } = req.params;
