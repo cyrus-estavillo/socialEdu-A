@@ -77,8 +77,32 @@ app.post('/login', async (req, res) => {
   }
 })
 
+app.get('/profile', (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, (err, info) => {
+    if (err) {
+      throw err;
+    }
+    else {
+      res.json(info);
+    }
+  })
+  res.json(req.cookies);
+})
+
 app.post('/logout', (req, res) => {
   res.cookie('token', '').json('logged out');
+})
+
+app.get("/user/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const userSpecific = await User.findById(id);
+    res.status(201).json({ userSpecific });
+  }
+  catch (e) {
+    res.status(400).json("Error getting the user");
+  }
 })
 
 app.get("/allUsers", async (req, res) => {
@@ -116,7 +140,7 @@ app.post("/post", async (req, res) => {
 
 app.get("/allPost", async (req, res) => {
   try {
-    const postLists = await Post.find().sort({date: -1, timestamp: -1});
+    const postLists = await Post.find().sort({ date: -1, timestamp: -1 });
     res.status(201).json({ postLists });
   }
   catch (e) {
@@ -147,7 +171,7 @@ app.post("/like/:id", async (req, res) => {
 
         userSpecific.liked.push(id); // add the post to liked array of user's account
         postSpecific.likes = postSpecific.likes + 1; // increment the likes
-        
+
         await userSpecific.save(); // update user info
         await postSpecific.save(); // update post information
         res.status(201).json("Successfully liked the post");
