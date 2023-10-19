@@ -156,6 +156,7 @@ app.post("/like/:id", async (req, res) => {
   })
 })
 
+<<<<<<< Updated upstream
 app.get("/comment", async (req, res) => {
   try {
     const commentList = Comment.find();
@@ -176,34 +177,76 @@ app.get("/comment/:id", async (req, res) => {
     res.status(400).json("Error retrieving the comment")
   }
 })
+=======
+/* ##### COMMENTS ##### */
+>>>>>>> Stashed changes
 
 app.post("/comment/:id", async (req, res) => {
   const { token } = req.cookies;
   const { id } = req.params;
   const { text } = req.body;
+
+  jwt.verify(token, secret, {}, async (err, info) => {
+      if (err) {
+          res.status(404).json("User Not Logged in");
+          return;
+      } else {
+          // Step 2.1: Extract tagged usernames from the comment text
+          const regex = /@[a-zA-Z0-9_]+/g;
+          const matches = text.match(regex);
+          const taggedUsernames = matches ? matches.map(match => match.substring(1)) : [];
+
+          // Step 2.2: Convert usernames to user IDs
+          const taggedUsers = await User.find({ username: { $in: taggedUsernames } }).select('_id');
+          const taggedUserIds = taggedUsers.map(user => user._id); // Create array of user IDs that were tagged in comment
+
+          console.log(`Tagged user IDs: ${taggedUserIds}`);
+
+          // Step 2.3: Create the comment with taggedUserIds
+          try {
+              const postSpecific = await Post.findById(id);
+              const commentSpecific = await Comment.create({
+                  text: text,
+                  commentPerson: info.id,
+                  taggedUsers: taggedUserIds  // Array of user IDs that were tagged in comment
+              });
+              postSpecific.comment.push(commentSpecific._id);
+              await postSpecific.save();
+
+              // Step 2.4: Notify tagged users (This could be a separate function)
+              // FIXME: For now, let's just log it
+              console.log(`Notify these user IDs: ${taggedUserIds}`);
+
+              res.status(201).json("Successfully commented");
+          } catch (e) {
+              res.status(400).json("Error with Commenting");
+          }
+      }
+  });
+});
+
+
+app.delete("/comment/:commentId", async (req, res) => {
+  const { token } = req.cookies;
+  const { commentId } = req.params;
   jwt.verify(token, secret, {}, async (err, info) => {
     if (err) {
       res.status(404).json("User Not Logged in");
       return;
     }
-    else {
-      try {
-        const postSpecific = await Post.findById(id);
-        const commentSpecific = await Comment.create({
-          text: text,
-          commentPerson: info.id
-        });
-        postSpecific.comment.push(commentSpecific._id);
-        await postSpecific.save();
-        res.status(201).json("Successfully commented")
-      }
-      catch (e) {
-        res.status(400).json("Error with Commenting");
-      }
+    const comment = await Comment.findById(commentId);
+    const post = await Post.findById(comment.post);
+    if (info.id === comment.commentPerson.toString() || info.id === post.author.toString()) {
+      await Comment.findByIdAndDelete(commentId);
+      res.status(200).json("Comment deleted");
+    } else {
+      res.status(403).json("Unauthorized");
     }
-  })
-})
+  });
+});
 
+
+/*
 app.post("/addFollowing/:id", async (req, res) => {
   const { id } = req.params;
   const { token } = req.cookies;
@@ -223,8 +266,10 @@ app.post("/addFollowing/:id", async (req, res) => {
         res.status(400).json("Error with Adding Followers");
       }
     }
-  })
+  }
 })
+});
+*/
 
 app.listen(3001, () => {
   console.log("Server is on port 3001..")
