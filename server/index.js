@@ -47,7 +47,7 @@ app.post('/signup', async (req, res) => {
     });
     res.status(201).json({ newUser });
   }
-  catch (e) {
+  catch (e) { // if username already exists
     res.status(400).json("Use different username / password");
   }
 })
@@ -55,11 +55,11 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const userDoc = await User.findOne({ username });
-  if (!userDoc) {
+  if (!userDoc) { // if username does not exist
     res.status(404).json("Invalid username");
     return;
   }
-  if (password === userDoc.password) {
+  if (password === userDoc.password) { // if password is correct
     jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
       if (err) {
         throw err;
@@ -77,8 +77,32 @@ app.post('/login', async (req, res) => {
   }
 })
 
+app.get('/profile', (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, (err, info) => {
+    if (err) {
+      throw err;
+    }
+    else {
+      res.json(info);
+    }
+  })
+  res.json(req.cookies);
+})
+
 app.post('/logout', (req, res) => {
   res.cookie('token', '').json('logged out');
+})
+
+app.get("/user/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const userSpecific = await User.findById(id);
+    res.status(201).json({ userSpecific });
+  }
+  catch (e) {
+    res.status(400).json("Error getting the user");
+  }
 })
 
 app.get("/allUsers", async (req, res) => {
@@ -95,11 +119,11 @@ app.post("/post", async (req, res) => {
   const { token } = req.cookies;
   const { text } = req.body;
   jwt.verify(token, secret, {}, async (err, info) => {
-    if (err) {
+    if (err) { // if user is not logged in
       res.status(404).json("User Not Logged in");
       return;
     }
-    else {
+    else {  // user loggin in
       try {
         const postSpecific = await Post.create({
           text: text,
@@ -116,11 +140,23 @@ app.post("/post", async (req, res) => {
 
 app.get("/allPost", async (req, res) => {
   try {
-    const postLists = await Post.find();
+    const postLists = await Post.find().sort({ date: -1, timestamp: -1 });
     res.status(201).json({ postLists });
   }
   catch (e) {
     res.status(400).json({ e });
+  }
+})
+
+app.get("/userLikedPosts/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const likedPosts = await User.findById(id);
+    const likedP = likedPosts.liked; 
+    res.status(201).json({ likedP });
+  }
+  catch (e) {
+    res.status(400).json("Could not retrieve liked posts");
   }
 })
 
@@ -136,17 +172,20 @@ app.post("/like/:id", async (req, res) => {
       try {
         const postSpecific = await Post.findById(id);
         const userSpecific = await User.findById(info.id);
-        if (userSpecific.liked.includes(postSpecific._id)) {
-          res.status(400).json("User already liked the post");
+        if (userSpecific.liked.includes(postSpecific._id)) { // if user has already liked the post
+          userSpecific.liked = userSpecific.liked.filter((postId) => postId.toString() !== postSpecific._id.toString()); // remove the post from liked array
+          postSpecific.likes = postSpecific.likes - 1; // decrement the likes
+          await userSpecific.save(); // update user info
+          await postSpecific.save(); // update post information
+          res.status(201).json("User disliked the post");
           return;
         }
 
-        postSpecific.likes = postSpecific.likes + 1;
-        userSpecific.liked.push(id);
+        userSpecific.liked.push(id); // add the post to liked array of user's account
+        postSpecific.likes = postSpecific.likes + 1; // increment the likes
 
-        await userSpecific.save();
-        await postSpecific.save();
-
+        await userSpecific.save(); // update user info
+        await postSpecific.save(); // update post information
         res.status(201).json("Successfully liked the post");
       }
       catch (e) {
@@ -173,7 +212,7 @@ app.get("/comment/:id", async (req, res) => {
     const commentSpecific = Comment.find(id);
     res.status(201).json(commentSpecific);
   }
-  catch(e) {
+  catch (e) {
     res.status(400).json("Error retrieving the comment")
   }
 })

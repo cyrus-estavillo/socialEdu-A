@@ -1,7 +1,7 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import { Button } from '@mui/material';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
@@ -13,6 +13,20 @@ import Logo from "../images/WISRR_Logo_Square.jpeg"
 const Header = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
     const navigate = useNavigate();
+
+    const getProfile = async () => {
+        const response = await fetch('http://localhost:3001/profile', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        setUserInfo(data);
+    }
+
+    useEffect(() => {
+        getProfile();
+    }, []);
 
     const logout = async () => {
         const response = await fetch('http://localhost:3001/logout', {
