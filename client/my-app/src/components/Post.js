@@ -34,8 +34,10 @@ import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+
 
 const Post = (props) => {
     const { userInfo } = useContext(UserContext);
@@ -47,11 +49,14 @@ const Post = (props) => {
         following: [],
         liked: [],
     });
+
     const [likedPost, setLike] = useState(false);
     const [showComments, setComments] = useState(false);
 
+
     const authorID = props.authorID;
     const postID = props.postID;
+
 
     const popComments = () => {
         if (showComments) {
@@ -62,6 +67,7 @@ const Post = (props) => {
         }
     }
 
+
     const getAllLikedPosts = async () => {
         const response = await fetch(`http://localhost:3001/userLikedPosts/${userInfo.id}`, {
             method: 'GET',
@@ -70,6 +76,7 @@ const Post = (props) => {
         })
         const data = await response.json();
         console.log(data.likedP)
+
         if (data.likedP.includes(postID)) {
             setLike(true);
         }
@@ -89,7 +96,9 @@ const Post = (props) => {
             credentials: 'include'
         })
         const data = await response.json();
+
         //window.location.reload();
+
     }
 
     const getAuthorDetailsOfPost = async () => {
@@ -111,7 +120,8 @@ const Post = (props) => {
 
     return (
         <div>
-            <Card sx={{ width: "100%", height: "100%", border: "1px solid #d3d3d3" }}>
+
+            <Card sx={{ width: "100%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
                 <CardContent>
                     <Stack direction="row" sx={{ marginLeft: 2 }}>
                         <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>

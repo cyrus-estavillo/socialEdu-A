@@ -6,9 +6,11 @@ const PostSchema = new Schema({
     author: {type: Schema.Types.ObjectId, ref: 'User', required: true},
     likes: {type: Number, default: 0},
     tags: [{type: String}],
-    comment: [{type: Schema.Types.ObjectId, ref: 'Comment'}],
+    comment: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
+    comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}], // Array of comments associated with the post
     date: {type: Date, default: Date.now},  // Stores the current date and time
     timestamp: {type: Number, default: Date.now()}  // Stores the current time in milliseconds
+
 });
 
 const PostModel = new model('Post', PostSchema);
