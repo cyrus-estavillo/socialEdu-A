@@ -52,10 +52,25 @@ const Post = (props) => {
 
     const [likedPost, setLike] = useState(false);
     const [showComments, setComments] = useState(false);
+    const [commentDes, setCommentDes] = useState([]);
 
 
     const authorID = props.authorID;
     const postID = props.postID;
+
+    const getAllComments = async () => {
+        const response = await fetch(`http://localhost:3001/commentsByPost/${postID}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        setCommentDes(data.commentsWithDescription);
+    }
+
+    useEffect(() => {
+        getAllComments();
+    }, [])
 
 
     const popComments = () => {
@@ -150,10 +165,14 @@ const Post = (props) => {
                 </CardContent>
             </Card>
             {showComments && (
-                <p>This is for comments</p>
+                commentDes.map((com) => (
+                    <p>{com.text}</p>
+                ))
             )}
         </div>
     )
 }
+
+// <p>{commentDes.text}</p>
 
 export default Post; 

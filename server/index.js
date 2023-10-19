@@ -152,7 +152,7 @@ app.get("/userLikedPosts/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const likedPosts = await User.findById(id);
-    const likedP = likedPosts.liked; 
+    const likedP = likedPosts.liked;
     res.status(201).json({ likedP });
   }
   catch (e) {
@@ -197,7 +197,7 @@ app.post("/like/:id", async (req, res) => {
 
 app.get("/comment", async (req, res) => {
   try {
-    const commentList = Comment.find();
+    const commentList = await Comment.find();
     res.status(201).json(commentList);
   }
   catch (e) {
@@ -208,11 +208,28 @@ app.get("/comment", async (req, res) => {
 app.get("/comment/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const commentSpecific = Comment.find(id);
+    const commentSpecific = await Comment.find(id);
     res.status(201).json(commentSpecific);
   }
   catch (e) {
     res.status(400).json("Error retrieving the comment")
+  }
+})
+
+app.get("/commentsByPost/:id", async (req, res) => {
+  const { id } = req.params; // post id
+  try {
+    const postSpecific = await Post.findById(id);
+    const comments = postSpecific.comment;
+    const commentsWithDescription = [];
+    for (var i = 0; i < comments.length; i++) {
+      const commentsSpecific = await Comment.findById(comments[i]);
+      commentsWithDescription.push(commentsSpecific);
+    }
+    res.status(201).json({ commentsWithDescription });
+  }
+  catch (e) {
+    res.status(400).json("Cannot retrieve comments for a post");
   }
 })
 
@@ -274,7 +291,8 @@ app.post("/comment/:id", async (req, res) => {
         const postSpecific = await Post.findById(id);
         const commentSpecific = await Comment.create({
           text: text,
-          commentPerson: info.id
+          commentAuthor: info.id,
+          postID: id
         });
         postSpecific.comment.push(commentSpecific._id);
         await postSpecific.save();
