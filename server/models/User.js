@@ -6,7 +6,12 @@ const UserSchema = new Schema({
     username: {type: String, required: true, unique: true},
     password: {type: String, required: true, unique: true},
     following: [{type: Schema.Types.ObjectId, ref: 'User'}],
-    liked: [{type: Schema.Types.ObjectId, ref: 'Post'}]
+    liked: [{type: Schema.Types.ObjectId, ref: 'Post'}],
+    notifications: [{
+        postID: {type: Schema.Types.ObjectId, ref: 'Post'},    // id of the post commented / liked
+        sendingUser: {type: Schema.Types.ObjectId, ref: 'User'}, // id of the user who commented / liked
+        action: {type: String} // action type stored as string, either "liked" or "commented"
+    }]
 })
 
 const UserModel = model('User', UserSchema);

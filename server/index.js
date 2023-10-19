@@ -216,7 +216,7 @@ app.get("/comment/:id", async (req, res) => {
   }
 })
 
-app.post("/comment/:id", async (req, res) => {
+/*app.post("/comment/:id", async (req, res) => {
   const { token } = req.cookies;
   const { id } = req.params;
   const { text } = req.body;
@@ -258,7 +258,34 @@ app.post("/comment/:id", async (req, res) => {
           }
       }
   });
-});
+});*/
+
+app.post("/comment/:id", async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  const { text } = req.body;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const postSpecific = await Post.findById(id);
+        const commentSpecific = await Comment.create({
+          text: text,
+          commentPerson: info.id
+        });
+        postSpecific.comment.push(commentSpecific._id);
+        await postSpecific.save();
+        res.status(201).json("Successfully commented")
+      }
+      catch (e) {
+        res.status(400).json("Error with Commenting");
+      }
+    }
+  })
+})
 
 
 app.delete("/comment/:commentId", async (req, res) => {
