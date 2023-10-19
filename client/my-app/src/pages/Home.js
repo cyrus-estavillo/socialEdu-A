@@ -14,7 +14,7 @@ import Post from "../components/Post";
 
 const Home = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
-    const [value, setValue] = React.useState(1);
+    const [value, setValue] = useState("1");
     const [posts, setPosts] = useState([]);
 
     const handleChange = (event, newValue) => {
@@ -43,6 +43,7 @@ const Home = () => {
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList
+                            value={value}
                             onChange={handleChange}
                             aria-label="lab API tabs example"
                             centered
@@ -54,7 +55,7 @@ const Home = () => {
                     </Box>
                     <TabPanel value="1">
                         {posts.map((post) => (
-                            <Post postID={post._id} authorID={post.author} text={post.text}/>
+                            <Post postID={post._id} authorID={post.author} text={post.text} />
                         ))}
                     </TabPanel>
                     <TabPanel value="2">Item Two</TabPanel>

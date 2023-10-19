@@ -34,6 +34,8 @@ import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 const Post = (props) => {
     const { userInfo } = useContext(UserContext);
@@ -45,10 +47,20 @@ const Post = (props) => {
         following: [],
         liked: [],
     });
-    const [likedPost, setLike] = useState(false); 
+    const [likedPost, setLike] = useState(false);
+    const [showComments, setComments] = useState(false);
 
     const authorID = props.authorID;
     const postID = props.postID;
+
+    const popComments = () => {
+        if (showComments) {
+            setComments(false);
+        }
+        else {
+            setComments(true);
+        }
+    }
 
     const getAllLikedPosts = async () => {
         const response = await fetch(`http://localhost:3001/userLikedPosts/${userInfo.id}`, {
@@ -58,11 +70,11 @@ const Post = (props) => {
         })
         const data = await response.json();
         console.log(data.likedP)
-        if(data.likedP.includes(postID)) {
+        if (data.likedP.includes(postID)) {
             setLike(true);
         }
         else {
-            setLike(false); 
+            setLike(false);
         }
     };
 
@@ -77,7 +89,7 @@ const Post = (props) => {
             credentials: 'include'
         })
         const data = await response.json();
-        window.location.reload();
+        //window.location.reload();
     }
 
     const getAuthorDetailsOfPost = async () => {
@@ -110,11 +122,26 @@ const Post = (props) => {
                     </Stack>
                     <CardActions sx={{ justifyContent: "space-evenly" }}>
                         <IconButton><ForumOutlinedIcon /></IconButton>
-                        {likedPost && (<IconButton onClick={likeButtonClick}><FavoriteIcon sx={{color: "red"}} /></IconButton>)}
-                        {!likedPost && (<IconButton onClick={likeButtonClick}><FavoriteBorderIcon /></IconButton>)}
+                        {likedPost ? (
+                            <IconButton onClick={likeButtonClick}>
+                                <FavoriteIcon sx={{ color: "red" }} />
+                            </IconButton>
+                        ) : (
+                            <IconButton onClick={likeButtonClick}>
+                                <FavoriteBorderIcon />
+                            </IconButton>
+                        )}
+                        {showComments ? (<IconButton onClick={popComments}>
+                            <ExpandLessIcon />
+                        </IconButton>) : (<IconButton onClick={popComments}>
+                            <ExpandMoreIcon />
+                        </IconButton>)}
                     </CardActions>
                 </CardContent>
             </Card>
+            {showComments && (
+                <p>This is for comments</p>
+            )}
         </div>
     )
 }
