@@ -195,7 +195,6 @@ app.post("/like/:id", async (req, res) => {
   })
 })
 
-<<<<<<< Updated upstream
 app.get("/comment", async (req, res) => {
   try {
     const commentList = Comment.find();
@@ -216,9 +215,6 @@ app.get("/comment/:id", async (req, res) => {
     res.status(400).json("Error retrieving the comment")
   }
 })
-=======
-/* ##### COMMENTS ##### */
->>>>>>> Stashed changes
 
 app.post("/comment/:id", async (req, res) => {
   const { token } = req.cookies;
