@@ -8,8 +8,8 @@ const UserSchema = new Schema({
     following: [{type: Schema.Types.ObjectId, ref: 'User'}],
     liked: [{type: Schema.Types.ObjectId, ref: 'Post'}],
     notifications: [{
-        postID: {type: Schema.Types.ObjectId, ref: 'Post'},    // id of the post commented / liked
-        sendingUser: {type: Schema.Types.ObjectId, ref: 'User'}, // id of the user who commented / liked
+        postID: {type: Schema.Types.ObjectId, ref: 'Post'},    // id of the post commented / liked  
+        sendingUser: {type: Schema.Types.ObjectId, ref: 'User'}, // id of the user who commented / liked (info.id)
         action: {type: String} // action type stored as string, either "liked" or "commented"
     }]
 })

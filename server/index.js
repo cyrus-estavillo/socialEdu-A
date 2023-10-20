@@ -171,10 +171,13 @@ app.post("/like/:id", async (req, res) => {
     else {
       try {
         const postSpecific = await Post.findById(id);
+        const receivingUser = await User.findById(postSpecific.author); 
         const userSpecific = await User.findById(info.id);
         if (userSpecific.liked.includes(postSpecific._id)) { // if user has already liked the post
           userSpecific.liked = userSpecific.liked.filter((postId) => postId.toString() !== postSpecific._id.toString()); // remove the post from liked array
           postSpecific.likes = postSpecific.likes - 1; // decrement the likes
+          receivingUser.notifications = receivingUser.notifications.filter((notif) => notif.postID.toString() !== id || notif.sendingUser.toString() !== info.id || notif.action.toString() !== "liked"); 
+          await receivingUser.save(); // update receiving info 
           await userSpecific.save(); // update user info
           await postSpecific.save(); // update post information
           res.status(201).json("User disliked the post");
@@ -184,8 +187,16 @@ app.post("/like/:id", async (req, res) => {
         userSpecific.liked.push(id); // add the post to liked array of user's account
         postSpecific.likes = postSpecific.likes + 1; // increment the likes
 
+        receivingUser.notifications.push({
+          postID: id,
+          sendingUser: info.id,
+          action: "liked"
+        })
+
+        await receivingUser.save(); // update receiving info 
         await userSpecific.save(); // update user info
         await postSpecific.save(); // update post information
+
         res.status(201).json("Successfully liked the post");
       }
       catch (e) {
@@ -289,12 +300,21 @@ app.post("/comment/:id", async (req, res) => {
     else {
       try {
         const postSpecific = await Post.findById(id);
+        const receivingUser = await User.findById(postSpecific.author); 
         const commentSpecific = await Comment.create({
           text: text,
           commentAuthor: info.id,
           postID: id
         });
         postSpecific.comment.push(commentSpecific._id);
+
+        receivingUser.notifications.push({
+          postID: id,
+          sendingUser: info.id,
+          action: "commented"
+        })
+
+        await receivingUser.save(); // update receiving info 
         await postSpecific.save();
         res.status(201).json("Successfully commented")
       }
@@ -315,12 +335,14 @@ app.delete("/comment/:commentId", async (req, res) => {
       return;
     }
     const comment = await Comment.findById(commentId);
-    const post = await Post.findById(comment.post);
-    if (info.id === comment.commentPerson.toString() || info.id === post.author.toString()) {
+    const post = await Post.findById(comment.postID);
+    if (info.id === comment.commentPerson) {
       await Comment.findByIdAndDelete(commentId);
+      post.comment = post.comment.filter((com) => com !== commentId);
+      await post.save(); 
       res.status(200).json("Comment deleted");
     } else {
-      res.status(403).json("Unauthorized");
+      res.status(400).json("Could not delete comment since this is not your comment");
     }
   });
 });

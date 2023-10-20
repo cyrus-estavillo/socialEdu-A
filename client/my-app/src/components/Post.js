@@ -34,13 +34,14 @@ import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 
 const Post = (props) => {
     const { userInfo } = useContext(UserContext);
+    const userInfoId = userInfo?.id;
+    console.log("userInfoId: ", typeof (userInfoId))
     const [user, setUser] = useState({
         _id: "",
         name: "",
@@ -53,6 +54,16 @@ const Post = (props) => {
     const [likedPost, setLike] = useState(false);
     const [showComments, setComments] = useState(false);
     const [commentDes, setCommentDes] = useState([]);
+    const [commentPos, setCommentPos] = useState("");
+    const [open, setOpen] = useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    }
 
 
     const authorID = props.authorID;
@@ -111,9 +122,7 @@ const Post = (props) => {
             credentials: 'include'
         })
         const data = await response.json();
-
-        //window.location.reload();
-
+        window.location.reload();
     }
 
     const getAuthorDetailsOfPost = async () => {
@@ -130,12 +139,41 @@ const Post = (props) => {
         getAuthorDetailsOfPost();
     }, [])
 
-    //console.log(user?.name);
-    //console.log(user.username);
+    const postComment = async () => {
+        const response = await fetch(`http://localhost:3001/comment/${postID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                text: commentPos
+            })
+        })
+        if (response.ok) {
+            handleClose();
+            window.location.reload();
+        }
+    }
 
     return (
         <div>
-
+            <Dialog
+                open={open}
+                onClose={handleClose}>
+                <DialogTitle sx={{ fontWeight: "bold", textAlign: "center" }}>
+                    Add a Comment!
+                </DialogTitle>
+                <DialogContent >
+                    <TextField sx={{ width: 400 }}
+                        multiline
+                        value={commentPos}
+                        onChange={(e) => setCommentPos(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button variant="contained" onClick={postComment}>Post</Button>
+                </DialogActions>
+            </Dialog>
             <Card sx={{ width: "100%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
                 <CardContent>
                     <Stack direction="row" sx={{ marginLeft: 2 }}>
@@ -146,7 +184,7 @@ const Post = (props) => {
                         <Typography variant="body1" gutterBottom>{props.text}</Typography>
                     </Stack>
                     <CardActions sx={{ justifyContent: "space-evenly" }}>
-                        <IconButton><ForumOutlinedIcon /></IconButton>
+                        <IconButton onClick={handleOpen}><ForumOutlinedIcon /></IconButton>
                         {likedPost ? (
                             <IconButton onClick={likeButtonClick}>
                                 <FavoriteIcon sx={{ color: "red" }} />
@@ -166,13 +204,16 @@ const Post = (props) => {
             </Card>
             {showComments && (
                 commentDes.map((com) => (
-                    <p>{com.text}</p>
+                    <Stack direction="row">
+                        <p>{com.text}</p>
+                        {userInfoId === com.commentAuthor && (
+                            <p>dffd</p>
+                        )}
+                    </Stack>
                 ))
             )}
         </div>
     )
 }
-
-// <p>{commentDes.text}</p>
 
 export default Post; 
