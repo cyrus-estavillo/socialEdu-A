@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
+import Notification from './pages/Notification';
 function App() {
   return (
     <div className="App">
@@ -19,6 +20,7 @@ function App() {
             <Route path="/signup" element={<Signup />}/>
             <Route path="/login" element={<Login />}/>
             <Route path="/home" element={<Home />}/>
+            <Route path="/notification" element={<Notification />}/>
           </Routes>
           <Footer />
         </UserContextProvider>

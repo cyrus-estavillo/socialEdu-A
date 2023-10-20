@@ -371,7 +371,7 @@ app.delete("/comment/:commentId", async (req, res) => {
       post.comment = post.comment.filter((com) => com.toString() !== commentId);
       receivingUser.notifications = receivingUser.notifications.filter((notif) => notif.postID.toString() !== post._id.toString() || notif.sendingUser.toString() !== info.id || notif.action.toString() !== "commented");
       await Comment.findByIdAndDelete(commentId);
-      await receivingUser.save(); 
+      await receivingUser.save();
       await post.save();
       res.status(200).json("Comment deleted");
     } else {
@@ -379,6 +379,18 @@ app.delete("/comment/:commentId", async (req, res) => {
     }
   });
 });
+
+app.get("/allNotif/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const userSpecific = await User.findById(id);
+    const notifList = userSpecific.notifications.reverse();
+    res.status(201).json({notifList})
+  }
+  catch (e) {
+    res.status(400).json("Could not retrieve all notifications"); 
+  }
+})
 
 
 /*
