@@ -36,6 +36,8 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Comment from './Comment';
 
 
 const Post = (props) => {
@@ -154,6 +156,17 @@ const Post = (props) => {
         }
     }
 
+    const deletePost = async () => {
+        const response = await fetch(`http://localhost:3001/post/${postID}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+        })
+        if (response.ok) {
+            window.location.reload();
+        }
+    }
+
     return (
         <div>
             <Dialog
@@ -176,9 +189,16 @@ const Post = (props) => {
             </Dialog>
             <Card sx={{ width: "100%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
                 <CardContent>
-                    <Stack direction="row" sx={{ marginLeft: 2 }}>
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}</Typography>
+                    <Stack direction="row" justifyContent="space-between">
+                        <Stack direction="row">
+                            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>
+                            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}</Typography>
+                        </Stack>
+                        {userInfoId == props.authorID && (
+                            <IconButton onClick={deletePost}>
+                                <DeleteIcon />
+                            </IconButton>
+                        )}
                     </Stack>
                     <Stack direction="row">
                         <Typography variant="body1" gutterBottom>{props.text}</Typography>
@@ -204,12 +224,7 @@ const Post = (props) => {
             </Card>
             {showComments && (
                 commentDes.map((com) => (
-                    <Stack direction="row">
-                        <p>{com.text}</p>
-                        {userInfoId === com.commentAuthor && (
-                            <p>dffd</p>
-                        )}
-                    </Stack>
+                    <Comment text={com.text} author={com.commentAuthor} commentID={com._id} />
                 ))
             )}
         </div>

@@ -138,6 +138,36 @@ app.post("/post", async (req, res) => {
   })
 })
 
+app.delete("/post/:id", async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) { // if user is not logged in
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {  // user loggin in
+      try {
+        const postSpecific = await Post.findById(id);
+        if (info.id == postSpecific.author.toString()) {
+          const commentList = postSpecific.comment;
+          for (var i = 0; i < commentList.length; i++) {
+            await Comment.findByIdAndDelete(commentList[i]._id);
+          }
+          await Post.findByIdAndDelete(id);
+          res.status(201).json("Successful Deletion");
+        }
+        else {
+          res.status(404).json("This is not your post to delete");
+        }
+      }
+      catch (e) {
+        res.status(400).json("Error with Deleting");
+      }
+    }
+  })
+})
+
 app.get("/allPost", async (req, res) => {
   try {
     const postLists = await Post.find().sort({ date: -1, timestamp: -1 });
@@ -171,12 +201,12 @@ app.post("/like/:id", async (req, res) => {
     else {
       try {
         const postSpecific = await Post.findById(id);
-        const receivingUser = await User.findById(postSpecific.author); 
+        const receivingUser = await User.findById(postSpecific.author);
         const userSpecific = await User.findById(info.id);
         if (userSpecific.liked.includes(postSpecific._id)) { // if user has already liked the post
           userSpecific.liked = userSpecific.liked.filter((postId) => postId.toString() !== postSpecific._id.toString()); // remove the post from liked array
           postSpecific.likes = postSpecific.likes - 1; // decrement the likes
-          receivingUser.notifications = receivingUser.notifications.filter((notif) => notif.postID.toString() !== id || notif.sendingUser.toString() !== info.id || notif.action.toString() !== "liked"); 
+          receivingUser.notifications = receivingUser.notifications.filter((notif) => notif.postID.toString() !== id || notif.sendingUser.toString() !== info.id || notif.action.toString() !== "liked");
           await receivingUser.save(); // update receiving info 
           await userSpecific.save(); // update user info
           await postSpecific.save(); // update post information
@@ -300,7 +330,7 @@ app.post("/comment/:id", async (req, res) => {
     else {
       try {
         const postSpecific = await Post.findById(id);
-        const receivingUser = await User.findById(postSpecific.author); 
+        const receivingUser = await User.findById(postSpecific.author);
         const commentSpecific = await Comment.create({
           text: text,
           commentAuthor: info.id,
@@ -336,10 +366,13 @@ app.delete("/comment/:commentId", async (req, res) => {
     }
     const comment = await Comment.findById(commentId);
     const post = await Post.findById(comment.postID);
-    if (info.id === comment.commentPerson) {
+    const receivingUser = await User.findById(post.author);
+    if (info.id === comment.commentAuthor.toString()) {
+      post.comment = post.comment.filter((com) => com.toString() !== commentId);
+      receivingUser.notifications = receivingUser.notifications.filter((notif) => notif.postID.toString() !== post._id.toString() || notif.sendingUser.toString() !== info.id || notif.action.toString() !== "commented");
       await Comment.findByIdAndDelete(commentId);
-      post.comment = post.comment.filter((com) => com !== commentId);
-      await post.save(); 
+      await receivingUser.save(); 
+      await post.save();
       res.status(200).json("Comment deleted");
     } else {
       res.status(400).json("Could not delete comment since this is not your comment");

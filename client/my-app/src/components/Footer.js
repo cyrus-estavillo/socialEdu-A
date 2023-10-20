@@ -57,6 +57,7 @@ const Footer = () => {
         });
         if(response.ok) {
             handleClose();
+            window.location.reload();
         }
         else {
             alert("Adding Unsuccessful");
