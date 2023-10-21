@@ -125,7 +125,7 @@ const Post = (props) => {
             credentials: 'include'
         });
         const data = await response.json();
-        setLikeCount(data.likeCount); // Assume the server returns the count in a field named 'likeCount'
+        setLikeCount(data.likeCount); 
     };
     
     useEffect(() => {
