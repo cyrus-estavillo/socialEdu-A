@@ -66,7 +66,7 @@ const Header = () => {
                 }}>
                     <div></div>
                     <img src={Logo} style={{ width: 100, height: 90 }}></img>
-                    <Button variant="contained" href="/" onClick={logout} sx={{}}>Logout</Button>
+                    <Button variant="contained" href="/" onClick={logout} sx={{ backgroundColor: 'black', color: 'white' }}>Logout</Button>
                 </div>
                 )}
 
