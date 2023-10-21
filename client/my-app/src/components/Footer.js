@@ -25,19 +25,72 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import ListItemText from '@mui/material/ListItemText';
+import Select from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+const names = [
+    'Easy',
+    'Medium',
+    'Hard',
+    'Computer Science',
+    'Machine Learning',
+    'Software Engineering',
+    'Non-STEM',
+    'Medicine',
+    'Video',
+    'Audio',
+    'Text'
+];
+
+function getStyles(name, personName, theme) {
+    return {
+        fontWeight:
+            personName.indexOf(name) === -1
+                ? theme.typography.fontWeightRegular
+                : theme.typography.fontWeightMedium,
+    };
+}
 
 const Footer = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
     const [value, setValue] = React.useState(0);
     const [open, setOpen] = useState(false);
     const [textVal, setText] = useState("");
+    const [personName, setPersonName] = React.useState([]);
+
+    const handleChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setPersonName(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+
+    console.log("Person Name: ", personName)
 
     const username = userInfo?.username;
     const idVal = userInfo?._id;
 
     const handleClose = () => {
-        setText(""); 
+        setText("");
         setOpen(false);
     };
 
@@ -52,10 +105,11 @@ const Footer = () => {
             method: 'POST',
             body: JSON.stringify({
                 text: textVal,
-                author: idVal
+                author: idVal,
+                tags: personName
             })
         });
-        if(response.ok) {
+        if (response.ok) {
             handleClose();
             window.location.reload();
         }
@@ -73,11 +127,35 @@ const Footer = () => {
                     Add a Post!
                 </DialogTitle>
                 <DialogContent >
-                    <TextField sx={{ width: 400 }}
+                    <TextField
                         multiline
                         value={textVal}
                         onChange={(e) => setText(e.target.value)}
+                        sx={{
+                            width: "100%",
+
+                        }}
                     />
+                    <FormControl sx={{ marginTop: 2, width: 300 }}>
+                        <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                        <Select
+                            labelId="demo-multiple-checkbox-label"
+                            id="demo-multiple-checkbox"
+                            multiple
+                            value={personName}
+                            onChange={handleChange}
+                            input={<OutlinedInput label="Tag" />}
+                            renderValue={(selected) => selected.join(', ')}
+                            MenuProps={MenuProps}
+                        >
+                            {names.map((name) => (
+                                <MenuItem key={name} value={name}>
+                                    <Checkbox checked={personName.indexOf(name) > -1} />
+                                    <ListItemText primary={name} />
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
@@ -98,7 +176,7 @@ const Footer = () => {
                         <BottomNavigationAction icon={<SearchRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction onClick={handleOpen} icon={<EmojiObjectsRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/notification" icon={<NotificationsRoundedIcon sx={{ color: "white" }} />} />
-                        <BottomNavigationAction icon={<AccountCircleRoundedIcon sx={{ color: "white" }} />} />
+                        <BottomNavigationAction href="/profile" icon={<AccountCircleRoundedIcon sx={{ color: "white" }} />} />
                     </BottomNavigation>
                 </Paper>
             ))}

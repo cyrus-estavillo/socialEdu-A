@@ -117,7 +117,7 @@ app.get("/allUsers", async (req, res) => {
 
 app.post("/post", async (req, res) => {
   const { token } = req.cookies;
-  const { text } = req.body;
+  const { text, tags } = req.body;
   jwt.verify(token, secret, {}, async (err, info) => {
     if (err) { // if user is not logged in
       res.status(404).json("User Not Logged in");
@@ -127,7 +127,8 @@ app.post("/post", async (req, res) => {
       try {
         const postSpecific = await Post.create({
           text: text,
-          author: info.id
+          author: info.id,
+          tags: tags
         });
         res.status(201).json({ postSpecific });
       }
@@ -399,15 +400,14 @@ app.get("/allNotif/:id", async (req, res) => {
   try {
     const userSpecific = await User.findById(id);
     const notifList = userSpecific.notifications.reverse();
-    res.status(201).json({notifList})
+    res.status(201).json({ notifList })
   }
   catch (e) {
-    res.status(400).json("Could not retrieve all notifications"); 
+    res.status(400).json("Could not retrieve all notifications");
   }
 })
 
 
-/*
 app.post("/addFollowing/:id", async (req, res) => {
   const { id } = req.params;
   const { token } = req.cookies;
@@ -427,10 +427,59 @@ app.post("/addFollowing/:id", async (req, res) => {
         res.status(400).json("Error with Adding Followers");
       }
     }
-  }
+  })
 })
-});
-*/
+
+app.get("/getUserPosts", async(req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const postLists = await Post.find();
+        const userPosts = postLists.filter((post) => post.author.toString() === info.id);
+        res.status(201).json({userPosts}); 
+      }
+      catch (e) {
+        res.status(400).json("Could not get user's posts");
+      }
+    }
+  })
+})
+
+app.get("/getFollowerPosts", async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        const postLists = await Post.find(); 
+        const userFollowers = userSpecific.following;
+        const postsJson = []
+        for(var i = 0; i < userFollowers.length; i++) {
+          for(var j = 0; j < postLists.length; j++) {
+            if(userFollowers[i].toString() == postLists[j].author.toString()) {
+              postsJson.push(postLists[j]); 
+            }
+          }
+        }
+        res.status(201).json({postsJson});
+      }
+      catch (e) {
+        res.status(400).json("Error with Getting Follower's Posts");
+      }
+    }
+  })
+})
+
+
 
 app.listen(3001, () => {
   console.log("Server is on port 3001..")
