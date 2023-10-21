@@ -469,6 +469,34 @@ app.post("/addFollowing/:id", async (req, res) => {
   })
 })
 
+app.get("/getFollowingRecommendations", async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        const userFollowing = userSpecific.following;
+        let userList = await User.find();
+        const userStringIds = [];
+        for (var i = 0; i < userFollowing.length; i++) {
+          userStringIds.push(userFollowing[i].toString());
+        }
+        userList = userList.filter((u) => !userStringIds.includes(u._id.toString()) && info.id.toString() !== u._id.toString());
+        console.log(userList);
+        res.status(201).json({ userList })
+      }
+      catch (e) {
+        res.status(400).json("Error with Getting Following Recommendations");
+      }
+    }
+  })
+})
+
+
 app.get("/getUserPosts", async (req, res) => {
   const { token } = req.cookies;
   jwt.verify(token, secret, {}, async (err, info) => {
@@ -499,16 +527,10 @@ app.get("/getFollowerPosts", async (req, res) => {
     else {
       try {
         const userSpecific = await User.findById(info.id);
-        const postLists = await Post.find();
         const userFollowers = userSpecific.following;
-        const postsJson = []
-        for (var i = 0; i < userFollowers.length; i++) {
-          for (var j = 0; j < postLists.length; j++) {
-            if (userFollowers[i].toString() == postLists[j].author.toString()) {
-              postsJson.push(postLists[j]);
-            }
-          }
-        }
+        const postsJson = await Post
+          .find({ author: { $in: userFollowers } }) 
+          .sort({ date: -1, timestamp: -1 }) 
         res.status(201).json({ postsJson });
       }
       catch (e) {
