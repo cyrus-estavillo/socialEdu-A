@@ -54,10 +54,9 @@ const Post = (props) => {
         liked: [],
     });
 
-    const tagList = props.tags; 
+    const tagList = props.tags;
 
     const [likedPost, setLike] = useState(false);
-    const [likeCount, setLikeCount] = useState(0);
     const [showComments, setComments] = useState(false);
     const [commentDes, setCommentDes] = useState([]);
     const [commentPos, setCommentPos] = useState("");
@@ -101,38 +100,20 @@ const Post = (props) => {
 
 
     const getAllLikedPosts = async () => {
-        const response = await fetch(`http://localhost:3001/userLikedPosts/${userInfo.id}`, {
+        const response = await fetch(`http://localhost:3001/userLiked`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
         })
         const data = await response.json();
-        console.log(data.likedP)
 
-        if (data.likedP.includes(postID)) {
+        if (data.userLikedPosts.includes(postID)) {
             setLike(true);
         }
         else {
             setLike(false);
         }
     };
-
-    const getInitialLikeCount = async () => {
-        // Fetch the initial like count from the server
-        const response = await fetch(`http://localhost:3001/likeCount/${postID}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        });
-        const data = await response.json();
-        setLikeCount(data.likeCount); 
-    };
-    
-    useEffect(() => {
-        getInitialLikeCount();
-    }, []);
-    
-
 
     useEffect(() => {
         getAllLikedPosts();
@@ -145,14 +126,7 @@ const Post = (props) => {
             credentials: 'include'
         })
         const data = await response.json();
-        
-        if (response.ok) {
-            // Toggle the 'likedPost' state
-            setLike(!likedPost);
-    
-            // Update the 'likeCount' state based on whether the post was liked or unliked
-            setLikeCount(likedPost ? likeCount - 1 : likeCount + 1);
-        }
+        window.location.reload();
     }
 
     const getAuthorDetailsOfPost = async () => {
@@ -231,9 +205,9 @@ const Post = (props) => {
                     <Stack direction="row">
                         <Typography variant="body1" gutterBottom>{props.text}</Typography>
                     </Stack>
-                    <Stack direction="row" sx={{marginTop: 0.5}}>
+                    <Stack direction="row" sx={{ marginTop: 0.5 }}>
                         {tagList.map((tag) => (
-                            <Chip label={tag} variant="outlined" sx={{marginRight: 1}} />
+                            <Chip label={tag} variant="outlined" sx={{ marginRight: 1 }} />
                         ))}
                     </Stack>
                     <CardActions sx={{ justifyContent: "space-evenly" }}>

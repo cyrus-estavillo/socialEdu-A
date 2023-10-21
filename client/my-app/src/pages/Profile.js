@@ -41,11 +41,12 @@ import Chip from '@mui/material/Chip';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import Post from '../components/Post'; 
+import Post from '../components/Post';
 
 const Profile = () => {
     const [value, setValue] = useState("1");
-    const [userPost, setUserPosts] = useState([]); 
+    const [userPost, setUserPosts] = useState([]);
+    const [userLikedPosts, setUserLikedPosts] = useState([]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -65,6 +66,22 @@ const Profile = () => {
 
     useEffect(() => {
         getUserPosts();
+    }, [])
+
+    const getUserLikedPosts = async () => {
+        const response = await fetch('http://localhost:3001/userLikedPosts', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            setUserLikedPosts(data.result);
+        }
+    };
+
+    useEffect(() => {
+        getUserLikedPosts();
     }, [])
 
     return (
@@ -88,7 +105,9 @@ const Profile = () => {
                         ))}
                     </TabPanel>
                     <TabPanel value="2">
-                        Item Two
+                        {userLikedPosts.map((post) => (
+                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} />
+                        ))}
                     </TabPanel>
                 </TabContext>
             </Box>
