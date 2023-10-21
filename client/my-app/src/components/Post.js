@@ -54,6 +54,7 @@ const Post = (props) => {
     });
 
     const [likedPost, setLike] = useState(false);
+    const [likeCount, setLikeCount] = useState(0);
     const [showComments, setComments] = useState(false);
     const [commentDes, setCommentDes] = useState([]);
     const [commentPos, setCommentPos] = useState("");
@@ -113,6 +114,23 @@ const Post = (props) => {
         }
     };
 
+    const getInitialLikeCount = async () => {
+        // Fetch the initial like count from the server
+        const response = await fetch(`http://localhost:3001/likeCount/${postID}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+        const data = await response.json();
+        setLikeCount(data.likeCount); // Assume the server returns the count in a field named 'likeCount'
+    };
+    
+    useEffect(() => {
+        getInitialLikeCount();
+    }, []);
+    
+
+
     useEffect(() => {
         getAllLikedPosts();
     }, [])
@@ -124,7 +142,14 @@ const Post = (props) => {
             credentials: 'include'
         })
         const data = await response.json();
-        window.location.reload();
+        
+        if (response.ok) {
+            // Toggle the 'likedPost' state
+            setLike(!likedPost);
+    
+            // Update the 'likeCount' state based on whether the post was liked or unliked
+            setLikeCount(likedPost ? likeCount - 1 : likeCount + 1);
+        }
     }
 
     const getAuthorDetailsOfPost = async () => {

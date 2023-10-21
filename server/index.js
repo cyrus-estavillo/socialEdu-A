@@ -236,6 +236,20 @@ app.post("/like/:id", async (req, res) => {
   })
 })
 
+
+
+app.get("/likeCount/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const postSpecific = await Post.findById(id);
+    res.status(201).json({ likeCount: postSpecific.likes });
+  }
+  catch (e) {
+    res.status(400).json("Error retrieving the like count");
+  }
+});
+
+
 app.get("/comment", async (req, res) => {
   try {
     const commentList = await Comment.find();
