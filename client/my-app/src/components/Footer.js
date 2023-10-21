@@ -45,17 +45,25 @@ const MenuProps = {
 };
 
 const names = [
-    'Easy',
-    'Medium',
-    'Hard',
-    'Computer Science',
-    'Machine Learning',
-    'Software Engineering',
-    'Non-STEM',
-    'Medicine',
-    'Video',
     'Audio',
-    'Text'
+    'Animals',
+    'Biology',
+    'Computer Science',
+    'Finance',
+    'Fitness',
+    'Food',
+    'History',
+    'Machine Learning',
+    'Math',
+    'Medicine',
+    'Music',
+    'Non-STEM',
+    'Philosophy',
+    'Physics',
+    'Software Engineering',
+    'Text',
+    'Tech',
+    'Video'
 ];
 
 function getStyles(name, personName, theme) {
