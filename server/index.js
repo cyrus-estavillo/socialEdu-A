@@ -189,13 +189,13 @@ app.get("/userLikedPosts", async (req, res) => {
     else {
       try {
         const userSpecific = await User.findById(info.id);
-        const userLikedPosts = userSpecific.liked; 
+        const userLikedPosts = userSpecific.liked;
         const result = [];
-        for(var i = 0; i < userLikedPosts.length; i++) {
+        for (var i = 0; i < userLikedPosts.length; i++) {
           const likedPosts = await Post.findById(userLikedPosts[i]);
           result.push(likedPosts);
         }
-        res.status(201).json({result});
+        res.status(201).json({ result });
       }
       catch (e) {
         res.status(400).json("Error with getting the liked posts");
@@ -214,8 +214,8 @@ app.get("/userLiked", async (req, res) => {
     else {
       try {
         const userSpecific = await User.findById(info.id);
-        const userLikedPosts = userSpecific.liked; 
-        res.status(201).json({userLikedPosts});
+        const userLikedPosts = userSpecific.liked;
+        res.status(201).json({ userLikedPosts });
       }
       catch (e) {
         res.status(400).json("Error with not getting Like IDs");
@@ -453,18 +453,23 @@ app.post("/addFollowing/:id", async (req, res) => {
     else {
       try {
         const userSpecific = await User.findById(info.id);
-        userSpecific.following.push(id);
-        await userSpecific.save();
-        res.status(201).json(`Added to Following ${id}`)
+        const found = userSpecific.following.find((e) => e.toString() == id.toString());
+        if (!found) {
+          userSpecific.following.push(id);
+          await userSpecific.save();
+          res.status(201).json(`Added to Following ${id}`)
+          return;
+        }
+        res.status(400).json("Already added following")
       }
       catch (e) {
-        res.status(400).json("Error with Adding Followers");
+        res.status(400).json("Error with Adding Following");
       }
     }
   })
 })
 
-app.get("/getUserPosts", async(req, res) => {
+app.get("/getUserPosts", async (req, res) => {
   const { token } = req.cookies;
   jwt.verify(token, secret, {}, async (err, info) => {
     if (err) {
@@ -475,7 +480,7 @@ app.get("/getUserPosts", async(req, res) => {
       try {
         const postLists = await Post.find();
         const userPosts = postLists.filter((post) => post.author.toString() === info.id);
-        res.status(201).json({userPosts}); 
+        res.status(201).json({ userPosts });
       }
       catch (e) {
         res.status(400).json("Could not get user's posts");
@@ -494,17 +499,17 @@ app.get("/getFollowerPosts", async (req, res) => {
     else {
       try {
         const userSpecific = await User.findById(info.id);
-        const postLists = await Post.find(); 
+        const postLists = await Post.find();
         const userFollowers = userSpecific.following;
         const postsJson = []
-        for(var i = 0; i < userFollowers.length; i++) {
-          for(var j = 0; j < postLists.length; j++) {
-            if(userFollowers[i].toString() == postLists[j].author.toString()) {
-              postsJson.push(postLists[j]); 
+        for (var i = 0; i < userFollowers.length; i++) {
+          for (var j = 0; j < postLists.length; j++) {
+            if (userFollowers[i].toString() == postLists[j].author.toString()) {
+              postsJson.push(postLists[j]);
             }
           }
         }
-        res.status(201).json({postsJson});
+        res.status(201).json({ postsJson });
       }
       catch (e) {
         res.status(400).json("Error with Getting Follower's Posts");
