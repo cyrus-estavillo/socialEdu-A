@@ -15,26 +15,26 @@ import Post from "../components/Post";
 const Home = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
     const [value, setValue] = useState("1");
-    const [posts, setPosts] = useState([]);
+    const [followingposts, setFollowingPosts] = useState([]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    const allPosts = async () => {
-        const response = await fetch('http://localhost:3001/allPost', {
+    const followingPosts = async () => {
+        const response = await fetch('http://localhost:3001/getFollowerPosts', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
         })
         const data = await response.json();
         if (response.ok) {
-            setPosts(data.postLists);
+            setFollowingPosts(data.postsJson);
         }
     };
 
     useEffect(() => {
-        allPosts();
+        followingPosts();
     }, [])
 
     return (
@@ -54,8 +54,8 @@ const Home = () => {
                         </TabList>
                     </Box>
                     <TabPanel value="1">
-                        {posts.map((post) => (
-                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment}/>
+                        {followingposts.map((post) => (
+                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} />
                         ))}
                     </TabPanel>
                     <TabPanel value="2">Item Two</TabPanel>

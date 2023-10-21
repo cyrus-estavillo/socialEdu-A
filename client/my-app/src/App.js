@@ -9,6 +9,9 @@ import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
 import Notification from './pages/Notification';
+import Profile from './pages/Profile';
+
+
 function App() {
   return (
     <div className="App">
@@ -21,6 +24,7 @@ function App() {
             <Route path="/login" element={<Login />}/>
             <Route path="/home" element={<Home />}/>
             <Route path="/notification" element={<Notification />}/>
+            <Route path="/profile" element={<Profile />}/>
           </Routes>
           <Footer />
         </UserContextProvider>
