@@ -85,7 +85,7 @@ const Profile = () => {
     }, [])
 
     return (
-        <div>
+        <div style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
             <Box sx={{ width: '100%', typography: 'body1' }}>
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

@@ -7,6 +7,7 @@ const UserSchema = new Schema({
     password: {type: String, required: true, unique: true},
     following: [{type: Schema.Types.ObjectId, ref: 'User'}],
     liked: [{type: Schema.Types.ObjectId, ref: 'Post'}],
+    preferences: [{type: String}], 
     notifications: [{
         postID: {type: Schema.Types.ObjectId, ref: 'Post'},    // id of the post commented / liked  
         sendingUser: {type: Schema.Types.ObjectId, ref: 'User'}, // id of the user who commented / liked (info.id)

@@ -64,7 +64,7 @@ const Notification = () => {
     }
 
     return (
-        <div>
+        <div style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
             {notifs.length > 0 && (notifs.map((not) => (
                 <NotifComponent postID={not.postID} sendingUser={not.sendingUser} action={not.action} />
             )))}
