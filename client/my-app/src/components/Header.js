@@ -45,8 +45,6 @@ const Header = () => {
 
     const username = userInfo?.username;
 
-    console.log("Header Username: ", username);
-
     return (
         <div>
             {!username &&

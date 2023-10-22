@@ -44,7 +44,6 @@ import Chip from '@mui/material/Chip';
 const Post = (props) => {
     const { userInfo } = useContext(UserContext);
     const userInfoId = userInfo?.id;
-    console.log("userInfoId: ", typeof (userInfoId))
     const [user, setUser] = useState({
         _id: "",
         name: "",

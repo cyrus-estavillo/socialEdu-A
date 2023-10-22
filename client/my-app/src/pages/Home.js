@@ -19,10 +19,29 @@ const Home = () => {
     const [value, setValue] = useState("1");
     const [followingposts, setFollowingPosts] = useState([]);
     const [potentialFollow, setPotentialFollow] = useState([]);
+    const [userDetails, setUserDetails] = useState();
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    const userId = userInfo?.id;
+
+    const getUserInformation = async () => {
+        const response = await fetch(`http://localhost:3001/user/${userId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            setUserDetails(data.userSpecific);
+        }
+    };
+
+    useEffect(() => {
+        getUserInformation();
+    }, [userId])
 
     const potentialFollowing = async () => {
         const response = await fetch('http://localhost:3001/getFollowingRecommendations', {
@@ -91,11 +110,13 @@ const Home = () => {
                         <h1>Add them to Following</h1>
                         <Stack direction="row" spacing={1}>
                             {potentialFollow.map((pot) => (
-                                <FollowingChip id={pot._id} name={pot.name}/>
+                                <FollowingChip id={pot._id} name={pot.name} />
                             ))}
                         </Stack>
                     </TabPanel>
-                    <TabPanel value="2">Item Two</TabPanel>
+                    <TabPanel value="2">
+                        {userDetails?.preferences.length == 0 && (<h1>Choose tags that you prefer in the <a href="/profile">Profile</a> Page</h1>)}
+                    </TabPanel>
                     <TabPanel value="3">Item Three</TabPanel>
                 </TabContext>
             </Box>

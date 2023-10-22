@@ -92,8 +92,6 @@ const Footer = () => {
         );
     };
 
-    console.log("Person Name: ", personName)
-
     const username = userInfo?.username;
     const idVal = userInfo?._id;
 

@@ -44,9 +44,13 @@ import TabPanel from '@mui/lab/TabPanel';
 import Post from '../components/Post';
 
 const Profile = () => {
+    const { userInfo } = useContext(UserContext);
     const [value, setValue] = useState("1");
     const [userPost, setUserPosts] = useState([]);
     const [userLikedPosts, setUserLikedPosts] = useState([]);
+    const [userDetails, setUserDetails] = useState(); 
+
+    const userId = userInfo?.id; 
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -68,6 +72,22 @@ const Profile = () => {
         getUserPosts();
     }, [])
 
+    const getUserInformation = async () => {
+        const response = await fetch(`http://localhost:3001/user/${userId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if(response.ok) {
+            setUserDetails(data.userSpecific); 
+        }
+    };
+
+    useEffect(() => {
+        getUserInformation();
+    }, [userId])
+
     const getUserLikedPosts = async () => {
         const response = await fetch('http://localhost:3001/userLikedPosts', {
             method: 'GET',
@@ -86,6 +106,8 @@ const Profile = () => {
 
     return (
         <div style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
+            <h1>Name: {userDetails?.name}</h1>
+            <h1>Username: {userDetails?.username}</h1>
             <Box sx={{ width: '100%', typography: 'body1' }}>
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
