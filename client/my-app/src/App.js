@@ -10,6 +10,7 @@ import Main from './components/Main';
 import Footer from './components/Footer';
 import Notification from './pages/Notification';
 import Profile from './pages/Profile';
+import Search from './pages/Search';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/signup" element={<Signup />}/>
             <Route path="/login" element={<Login />}/>
             <Route path="/home" element={<Home />}/>
+            <Route path="/search" element={<Search />}/>
             <Route path="/notification" element={<Notification />}/>
             <Route path="/profile" element={<Profile />}/>
           </Routes>

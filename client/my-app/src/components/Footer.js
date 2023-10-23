@@ -179,7 +179,7 @@ const Footer = () => {
                         sx={{ backgroundColor: "black" }}
                     >
                         <BottomNavigationAction href="/home" icon={<HomeRoundedIcon sx={{ color: "white" }} />} />
-                        <BottomNavigationAction icon={<SearchRoundedIcon sx={{ color: "white" }} />} />
+                        <BottomNavigationAction href="/search" icon={<SearchRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction onClick={handleOpen} icon={<EmojiObjectsRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/notification" icon={<NotificationsRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/profile" icon={<AccountCircleRoundedIcon sx={{ color: "white" }} />} />
