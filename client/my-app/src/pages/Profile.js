@@ -48,9 +48,10 @@ const Profile = () => {
     const [value, setValue] = useState("1");
     const [userPost, setUserPosts] = useState([]);
     const [userLikedPosts, setUserLikedPosts] = useState([]);
-    const [userDetails, setUserDetails] = useState(); 
+    const [userDetails, setUserDetails] = useState();
+    const [userPreferences, setUserPreferences] = useState([]);
 
-    const userId = userInfo?.id; 
+    const userId = userInfo?.id;
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -79,8 +80,9 @@ const Profile = () => {
             credentials: 'include'
         })
         const data = await response.json();
-        if(response.ok) {
-            setUserDetails(data.userSpecific); 
+        if (response.ok) {
+            setUserDetails(data.userSpecific);
+            setUserPreferences(data.userSpecific.preferences);
         }
     };
 
@@ -106,9 +108,17 @@ const Profile = () => {
 
     return (
         <div style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
-            <h1>Name: {userDetails?.name}</h1>
-            <h1>Username: {userDetails?.username}</h1>
-            <Box sx={{ width: '100%', typography: 'body1' }}>
+                <h1>Name: {userDetails?.name}</h1>
+                <h1>Username: @{userDetails?.username}</h1>
+                <h1 style={{ textDecoration: "underline" }}>Preferred Tags </h1>
+                {userDetails?.preferences.length > 0 ? (
+                    userPreferences.map((userP) => (
+                        <Chip label={userP} variant="outlined" sx={{ marginRight: 1 }} />
+                    ))
+                ) : (
+                    <h1>N/A</h1>
+                )}
+            <Box sx={{ width: '100%', typography: 'body1', marginTop: 2 }}>
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList
