@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import UserContextProvider from './components/UserContext';
+import QueryPosts from './components/QueryPosts';  
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Home from './pages/Home'
@@ -25,6 +26,7 @@ function App() {
             <Route path="/login" element={<Login />}/>
             <Route path="/home" element={<Home />}/>
             <Route path="/search" element={<Search />}/>
+            <Route path="/posts/:query" element={<QueryPosts />} />
             <Route path="/notification" element={<Notification />}/>
             <Route path="/profile" element={<Profile />}/>
           </Routes>
