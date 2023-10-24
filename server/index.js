@@ -577,6 +577,23 @@ app.get('/search/users', async (req, res) => {
 
 
 
+app.get('/getPostsByQuery', async (req, res) => {
+  const searchQuery = req.query.q;
+  try {
+      const results = await Post.find({
+          $or: [
+              { "text": { $regex: searchQuery, $options: 'i' } },
+              { "tags": { $regex: searchQuery, $options: 'i' } }
+          ]
+      });
+      res.status(200).json(results);
+  } catch (e) {
+      res.status(400).json({ error: "An error occurred while searching for posts" });
+  }
+});
+
+
+
 
 
 app.listen(3001, () => {

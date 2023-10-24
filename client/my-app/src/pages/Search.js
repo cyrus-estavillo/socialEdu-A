@@ -52,7 +52,7 @@ const Search= () => {
                 />
             </div>
             {posts.length > 0 && 
-                <Link to={`google.com/${input}`}>See all posts related to {input}</Link> // TODO: Change this to the correct link
+                <Link to={`posts/${input}`}>See all posts related to {input}</Link> // TODO: Change this to the correct link
                 //<Link to={`/posts/${input}`}>See all posts related to {input}</Link> // Link to relevant posts if more than one post is found to match current input
             }
             {users.map(user => (
