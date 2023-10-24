@@ -506,7 +506,7 @@ app.get("/getUserPosts", async (req, res) => {
     }
     else {
       try {
-        const postLists = await Post.find();
+        const postLists = await Post.find().sort({ date: -1, timestamp: -1 });
         const userPosts = postLists.filter((post) => post.author.toString() === info.id);
         res.status(201).json({ userPosts });
       }
