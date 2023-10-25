@@ -49,3 +49,8 @@
   .white-input .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
     border-color: white !important;
   }
+
+  .white-input .MuiTextField-root {
+    margin-bottom: 10px;
+  }
+  

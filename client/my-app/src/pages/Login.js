@@ -35,6 +35,8 @@ const Login = () => {
             })
         })
 
+        console.log("Response status: ", response.status)
+
         if (response.ok) {
             const userInfo = await response.json();
             console.log(userInfo);
