@@ -61,7 +61,6 @@ const Header = () => {
                     minHeight: "80px", height: "20%", display: "flex",
                     alignContent: "center", alignItems: "center", justifyContent: "right",
                     paddingTop: "10px", paddingRight: "5px", paddingLeft: "5px",
-                    backgroundColor: "black", color: "white"
                 }}>
                     <Button variant="contained" href="/login" sx={{ marginRight: "6px" }}>Login</Button>
                     <Button variant="contained" href="/signup" sx={{ marginRight: "10px" }}>Signup</Button></div>

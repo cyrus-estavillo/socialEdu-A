@@ -58,7 +58,7 @@ const Main = () => {
         });
 
         if (response.ok) {
-            navigate('/home');  // Navigate to home after successful signup
+            login();  
         } else {
             alert("Signup unsuccessful");
         }
