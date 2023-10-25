@@ -1,0 +1,51 @@
+.login-container {
+    background-color: black;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logo {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, transform 1s ease-in-out;
+  }
+  
+  .logo.slide-up {
+    opacity: 1;
+    transform: translateY(-50px);
+  }
+  
+  .button-container {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  .button-container.visible {
+    opacity: 1;
+  }
+
+  .white-input .MuiOutlinedInput-root {
+    border-color: white !important;
+  }
+  
+  /* For the text */
+  .white-input .MuiInputBase-input {
+    color: white !important;
+  }
+  
+  /* For the label */
+  .white-input .MuiInputLabel-outlined {
+    color: white !important;
+  }
+  
+  /* For the label when focused */
+  .white-input .MuiInputLabel-outlined.Mui-focused {
+    color: white !important;
+  }
+  
+  /* For the outline when focused */
+  .white-input .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: white !important;
+  }
