@@ -105,6 +105,17 @@ app.get("/user/:id", async (req, res) => {
   }
 })
 
+app.get("/postsForEachUser/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const postLists = await Post.find({author: id});
+    res.status(201).json({postLists}); 
+  }
+  catch(e) {
+    res.status(400).json("Error with getting posts for each user");
+  }
+});
+
 app.get("/allUsers", async (req, res) => {
   try {
     const userList = await User.find();
