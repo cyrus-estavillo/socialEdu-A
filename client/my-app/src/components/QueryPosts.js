@@ -19,7 +19,7 @@ const QueryPosts = () => {
     <div>
       {posts.map((post, index) => (
         <div key={index}>
-          {/* Your post display logic here */}
+          {/* How do I display the relevant posts? */}
         </div>
       ))}
     </div>

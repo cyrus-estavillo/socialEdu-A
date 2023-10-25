@@ -8,7 +8,8 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { UserContext } from "../components/UserContext";
 import Logo from "../images/WISRR_Logo_Square.jpeg"
-// use display: "flex" in order to fix any align problem
+import { useLocation } from 'react-router-dom';
+
 
 const Header = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
@@ -27,6 +28,14 @@ const Header = () => {
     useEffect(() => {
         getProfile();
     }, []);
+
+    // Add this line to get the current location
+    const location = useLocation();
+
+    if(location.pathname === "/") {
+        return null;  // Don't render anything if on the landing page
+    }
+
 
     const logout = async () => {
         const response = await fetch('http://localhost:3001/logout', {
@@ -51,7 +60,7 @@ const Header = () => {
                 (<div style={{
                     minHeight: "80px", height: "20%", display: "flex",
                     alignContent: "center", alignItems: "center", justifyContent: "right",
-                    paddingTop: "10px", paddingRight: "5px", paddingLeft: "5px"
+                    paddingTop: "10px", paddingRight: "5px", paddingLeft: "5px",
                 }}>
                     <Button variant="contained" href="/login" sx={{ marginRight: "6px" }}>Login</Button>
                     <Button variant="contained" href="/signup" sx={{ marginRight: "10px" }}>Signup</Button></div>
