@@ -105,6 +105,17 @@ app.get("/user/:id", async (req, res) => {
   }
 })
 
+app.get("/postsForEachUser/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const postLists = await Post.find({author: id});
+    res.status(201).json({postLists}); 
+  }
+  catch(e) {
+    res.status(400).json("Error with getting posts for each user");
+  }
+});
+
 app.get("/allUsers", async (req, res) => {
   try {
     const userList = await User.find();
@@ -529,8 +540,8 @@ app.get("/getFollowerPosts", async (req, res) => {
         const userSpecific = await User.findById(info.id);
         const userFollowers = userSpecific.following;
         const postsJson = await Post
-          .find({ author: { $in: userFollowers } }) 
-          .sort({ date: -1, timestamp: -1 }) 
+          .find({ author: { $in: userFollowers } })
+          .sort({ date: -1, timestamp: -1 })
         res.status(201).json({ postsJson });
       }
       catch (e) {
@@ -546,15 +557,15 @@ app.get("/getFollowerPosts", async (req, res) => {
 app.get('/search/posts', async (req, res) => {
   const searchQuery = req.query.q;
   try {
-      const results = await Post.find({
-          $or: [
-              { "text": { $regex: searchQuery, $options: 'i' } },
-              { "tags": { $regex: searchQuery, $options: 'i' } }
-          ]
-      });
-      res.status(200).json(results);
+    const results = await Post.find({
+      $or: [
+        { "text": { $regex: searchQuery, $options: 'i' } },
+        { "tags": { $regex: searchQuery, $options: 'i' } }
+      ]
+    });
+    res.status(200).json(results);
   } catch (e) {
-      res.status(400).json({ error: "An error occurred while searching for posts" });
+    res.status(400).json({ error: "An error occurred while searching for posts" });
   }
 });
 
@@ -563,15 +574,15 @@ app.get('/search/posts', async (req, res) => {
 app.get('/search/users', async (req, res) => {
   const searchQuery = req.query.q;
   try {
-      const results = await User.find({
-          $or: [
-              { "username": { $regex: searchQuery, $options: 'i' } },
-              { "name": { $regex: searchQuery, $options: 'i' } }
-          ]
-      });
-      res.status(200).json(results);
+    const results = await User.find({
+      $or: [
+        { "username": { $regex: searchQuery, $options: 'i' } },
+        { "name": { $regex: searchQuery, $options: 'i' } }
+      ]
+    });
+    res.status(200).json(results);
   } catch (e) {
-      res.status(400).json({ error: "An error occurred while searching for users" });
+    res.status(400).json({ error: "An error occurred while searching for users" });
   }
 });
 
@@ -580,15 +591,15 @@ app.get('/search/users', async (req, res) => {
 app.get('/getPostsByQuery', async (req, res) => {
   const searchQuery = req.query.q;
   try {
-      const results = await Post.find({
-          $or: [
-              { "text": { $regex: searchQuery, $options: 'i' } },
-              { "tags": { $regex: searchQuery, $options: 'i' } }
-          ]
-      });
-      res.status(200).json(results);
+    const results = await Post.find({
+      $or: [
+        { "text": { $regex: searchQuery, $options: 'i' } },
+        { "tags": { $regex: searchQuery, $options: 'i' } }
+      ]
+    });
+    res.status(200).json(results);
   } catch (e) {
-      res.status(400).json({ error: "An error occurred while searching for posts" });
+    res.status(400).json({ error: "An error occurred while searching for posts" });
   }
 });
 
