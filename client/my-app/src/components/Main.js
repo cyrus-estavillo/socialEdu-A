@@ -94,6 +94,7 @@ const Main = () => {
               <Button variant="contained" onClick={() => handleButtonClick('signup')}>Sign Up</Button>
             </div>
           )}
+
         </div>
     )
 }

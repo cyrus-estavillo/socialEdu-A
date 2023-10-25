@@ -517,7 +517,7 @@ app.get("/getUserPosts", async (req, res) => {
     }
     else {
       try {
-        const postLists = await Post.find();
+        const postLists = await Post.find().sort({ date: -1, timestamp: -1 });
         const userPosts = postLists.filter((post) => post.author.toString() === info.id);
         res.status(201).json({ userPosts });
       }
@@ -550,6 +550,66 @@ app.get("/getFollowerPosts", async (req, res) => {
     }
   })
 })
+
+app.post("/addPreferences", async (req, res) => {
+  const { token } = req.cookies;
+  const { preferTags } = req.body;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        if (userSpecific.preferences.length > 0) {
+          res.status(400).json("Preferences is already set.");
+          return;
+        }
+        userSpecific.preferences = preferTags;
+        await userSpecific.save();
+        res.status(201).json("Successfully set preferences");
+      }
+      catch (e) {
+        res.status(400).json("Error with Posting Preferences");
+      }
+    }
+  })
+})
+
+app.get("/getRecommendedPosts", async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        const userPreferences = userSpecific.preferences; 
+        
+        const postList = await Post.find().sort({ date: -1, timestamp: -1 });
+
+        const postRes = []
+        for(var i = 0; i < postList.length; i++) {
+            const tagList = postList[i].tags;
+            for(var j = 0; j < tagList.length; j++) {
+                if(userPreferences.includes(tagList[j])) {
+                  postRes.push(postList[i]);
+                  break;
+                }
+            }
+        }
+        res.status(201).json({postRes}); 
+      }
+      catch (e) {
+        res.status(400).json("Error with Getting Recommendations");
+      }
+    }
+  })
+})
+
 
 
 /* ##### SEARCH ##### */

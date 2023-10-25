@@ -39,13 +39,10 @@ const Search = () => {
                 userPostData[user._id] = userPosts;
             }
             setUserPosts(userPostData);
-
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
-
-    console.log("UserMap: ", userPosts);
 
     const fetchUserPosts = async (userId) => {
         try {
@@ -65,7 +62,7 @@ const Search = () => {
 
     return (
 
-        <div className="input-wrapper">
+        <div className="input-wrapper" style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
             <div>
                 <SearchRoundedIcon sx={{ color: "black" }} />
                 <input
@@ -101,7 +98,8 @@ const Search = () => {
                 ))
             )}
             {posts.length === 0 && users.length === 0 && input !== "" &&
-                <div>
+
+                <div style={{marginTop: 5}}>
                     Sorry, we can't find anything related to {input}. Try searching something else.
                 </div>
             }
