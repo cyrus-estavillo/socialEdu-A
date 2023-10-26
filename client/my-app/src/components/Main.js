@@ -67,11 +67,17 @@ const Main = () => {
 
     return (
         <div className="login-container">
+            <h1 style={{color: "white"}}>Wisrr</h1>
+            <h1 style={{color: "white"}}>Created By: Pranet Allu and Cyrus Estavillo</h1>
+            <br />
+            <br />
+            <br />
             <img
                 src={`${process.env.PUBLIC_URL}/WISRR_Logo-Inverted.jpeg`}
                 alt="logo"
                 className={`logo ${showButtons ? 'slide-up' : ''}`}
             />
+
             {formType ? (
                 <div className="input-container">
                     {/* Display different input fields based on formType */}
