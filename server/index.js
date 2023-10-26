@@ -105,13 +105,24 @@ app.get("/user/:id", async (req, res) => {
   }
 })
 
+app.get("/post/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const postSpecific = await Post.findById(id);
+    res.status(201).json({ postSpecific });
+  }
+  catch (e) {
+    res.status(400).json("Error getting the post");
+  }
+})
+
 app.get("/postsForEachUser/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const postLists = await Post.find({author: id});
-    res.status(201).json({postLists}); 
+    const postLists = await Post.find({ author: id });
+    res.status(201).json({ postLists });
   }
-  catch(e) {
+  catch (e) {
     res.status(400).json("Error with getting posts for each user");
   }
 });
@@ -587,21 +598,21 @@ app.get("/getRecommendedPosts", async (req, res) => {
     else {
       try {
         const userSpecific = await User.findById(info.id);
-        const userPreferences = userSpecific.preferences; 
-        
+        const userPreferences = userSpecific.preferences;
+
         const postList = await Post.find().sort({ date: -1, timestamp: -1 });
 
         const postRes = []
-        for(var i = 0; i < postList.length; i++) {
-            const tagList = postList[i].tags;
-            for(var j = 0; j < tagList.length; j++) {
-                if(userPreferences.includes(tagList[j])) {
-                  postRes.push(postList[i]);
-                  break;
-                }
+        for (var i = 0; i < postList.length; i++) {
+          const tagList = postList[i].tags;
+          for (var j = 0; j < tagList.length; j++) {
+            if (userPreferences.includes(tagList[j])) {
+              postRes.push(postList[i]);
+              break;
             }
+          }
         }
-        res.status(201).json({postRes}); 
+        res.status(201).json({ postRes });
       }
       catch (e) {
         res.status(400).json("Error with Getting Recommendations");
