@@ -168,6 +168,10 @@ const Post = (props) => {
         }
     }
 
+    console.log("Properties Date: ", props.date);
+    var date = new Date(props.date);
+    console.log("Date1: ", date);
+
     return (
         <div>
             <Dialog
@@ -188,55 +192,60 @@ const Post = (props) => {
                     <Button variant="contained" onClick={postComment}>Post</Button>
                 </DialogActions>
             </Dialog>
-            <Card sx={{ width: "100%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
-                <CardContent>
-                    <Stack direction="row" justifyContent="space-between">
-                        <Stack direction="row">
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}</Typography>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+                <Card sx={{ width: "80%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
+                    <CardContent>
+                        <Stack direction="row" justifyContent="space-between">
+                            <Stack direction="row">
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}</Typography>
+                            </Stack>
+                            <Stack direction="row">
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{date.toLocaleString().substring(0, 10)}</Typography>
+                                {userInfoId == props.authorID && (
+                                    <IconButton onClick={deletePost}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                )}
+                            </Stack>
                         </Stack>
-                        {userInfoId == props.authorID && (
-                            <IconButton onClick={deletePost}>
-                                <DeleteIcon />
-                            </IconButton>
-                        )}
-                    </Stack>
-                    <Stack direction="row">
-                        <Typography variant="body1" gutterBottom>{props.text}</Typography>
-                    </Stack>
-                    <Stack direction="row" sx={{ marginTop: 0.5 }}>
-                        {tagList.map((tag) => (
-                            <Chip label={tag} variant="outlined" sx={{ marginRight: 1 }} />
-                        ))}
-                    </Stack>
-                    <CardActions sx={{ justifyContent: "space-evenly" }}>
-                        <IconButton onClick={handleOpen}><ForumOutlinedIcon /></IconButton>
                         <Stack direction="row">
-                            {likedPost ? (
-                                <IconButton onClick={likeButtonClick}>
-                                    <FavoriteIcon sx={{ color: "red" }} />
-                                </IconButton>
-                            ) : (
-                                <IconButton onClick={likeButtonClick}>
-                                    <FavoriteBorderIcon />
-                                </IconButton>
-                            )}
-                            <p>{props.likeCount}</p>
+                            <Typography variant="body1" gutterBottom>{props.text}</Typography>
                         </Stack>
-                        {showComments ? (<IconButton onClick={popComments}>
-                            <ExpandLessIcon />
-                        </IconButton>) : (<IconButton onClick={popComments}>
-                            <ExpandMoreIcon />
-                        </IconButton>)}
-                    </CardActions>
-                </CardContent>
-            </Card>
-            {showComments && (
-                commentDes.map((com) => (
-                    <Comment text={com.text} author={com.commentAuthor} commentID={com._id} />
-                ))
-            )}
-        </div>
+                        <Stack direction="row" sx={{ marginTop: 0.5 }}>
+                            {tagList.map((tag) => (
+                                <Chip label={tag} variant="outlined" sx={{ marginRight: 1 }} />
+                            ))}
+                        </Stack>
+                        <CardActions sx={{ justifyContent: "space-evenly" }}>
+                            <IconButton onClick={handleOpen}><ForumOutlinedIcon /></IconButton>
+                            <Stack direction="row">
+                                {likedPost ? (
+                                    <IconButton onClick={likeButtonClick}>
+                                        <FavoriteIcon sx={{ color: "red" }} />
+                                    </IconButton>
+                                ) : (
+                                    <IconButton onClick={likeButtonClick}>
+                                        <FavoriteBorderIcon />
+                                    </IconButton>
+                                )}
+                                <p>{props.likeCount}</p>
+                            </Stack>
+                            {showComments ? (<IconButton onClick={popComments}>
+                                <ExpandLessIcon />
+                            </IconButton>) : (<IconButton onClick={popComments}>
+                                <ExpandMoreIcon />
+                            </IconButton>)}
+                        </CardActions>
+                    </CardContent>
+                </Card>
+                {showComments && (
+                    commentDes.map((com) => (
+                        <Comment text={com.text} author={com.commentAuthor} commentID={com._id} />
+                    ))
+                )}
+            </div>
+        </div >
     )
 }
 

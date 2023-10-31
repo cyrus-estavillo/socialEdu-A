@@ -177,7 +177,7 @@ const Home = () => {
     }
 
     useEffect(() => {
-        getRecommendedPosts(); 
+        getRecommendedPosts();
     })
 
     return (
@@ -191,14 +191,22 @@ const Home = () => {
                             aria-label="lab API tabs example"
                             centered
                         >
-                            <Tab label="Following" value="1" sx={{marginRight: 10}} />
+                            <Tab label="Following" value="1" sx={{ marginRight: 10 }} />
                             <Tab label="For You" value="2" />
                             {/*<Tab label="Community" value="3" />*/}
                         </TabList>
                     </Box>
                     <TabPanel value="1">
                         {followingposts.map((post) => (
-                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} likeCount={post.likes}/>
+                            <Post
+                                postID={post._id}
+                                authorID={post.author}
+                                text={post.text}
+                                comments={post.comment}
+                                tags={post.tags}
+                                likeCount={post.likes}
+                                date={post.date}
+                            />
                         ))}
                         <h1>Add them to Following</h1>
                         <Stack direction="row" spacing={1}>
@@ -235,7 +243,15 @@ const Home = () => {
                             </div>)}
                         {userDetails?.preferences.length > 0 && (
                             recomPosts.map((recom) => (
-                                <Post postID={recom._id} authorID={recom.author} text={recom.text} comments={recom.comment} tags={recom.tags} likeCount={recom.likes}/>
+                                <Post
+                                    postID={recom._id}
+                                    authorID={recom.author}
+                                    text={recom.text}
+                                    comments={recom.comment}
+                                    tags={recom.tags}
+                                    likeCount={recom.likes}
+                                    date={recom.date}
+                                />
                             )
                             ))}
                     </TabPanel>

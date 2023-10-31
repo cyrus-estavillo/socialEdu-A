@@ -108,16 +108,16 @@ const Profile = () => {
 
     return (
         <div style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
-                <h1>Name: {userDetails?.name}</h1>
-                <h1>Username: @{userDetails?.username}</h1>
-                <h1 style={{ textDecoration: "underline" }}>Preferred Tags </h1>
-                {userDetails?.preferences.length > 0 ? (
-                    userPreferences.map((userP) => (
-                        <Chip label={userP} variant="outlined" sx={{ marginRight: 1 }} />
-                    ))
-                ) : (
-                    <h1>N/A</h1>
-                )}
+            <h1>Name: {userDetails?.name}</h1>
+            <h1>Username: @{userDetails?.username}</h1>
+            <h1 style={{ textDecoration: "underline" }}>Preferred Tags </h1>
+            {userDetails?.preferences.length > 0 ? (
+                userPreferences.map((userP) => (
+                    <Chip label={userP} variant="outlined" sx={{ marginRight: 1 }} />
+                ))
+            ) : (
+                <h1>N/A</h1>
+            )}
             <Box sx={{ width: '100%', typography: 'body1', marginTop: 2 }}>
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -133,12 +133,28 @@ const Profile = () => {
                     </Box>
                     <TabPanel value="1">
                         {userPost.map((post) => (
-                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} likeCount={post.likes}/>
+                            <Post
+                                postID={post._id}
+                                authorID={post.author}
+                                text={post.text}
+                                comments={post.comment}
+                                tags={post.tags}
+                                likeCount={post.likes}
+                                date={post.date}
+                            />
                         ))}
                     </TabPanel>
                     <TabPanel value="2">
                         {userLikedPosts.map((post) => (
-                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} likeCount={post.likes} />
+                            <Post
+                                postID={post._id}
+                                authorID={post.author}
+                                text={post.text}
+                                comments={post.comment}
+                                tags={post.tags}
+                                likeCount={post.likes} 
+                                date={post.date}
+                            />
                         ))}
                     </TabPanel>
                 </TabContext>

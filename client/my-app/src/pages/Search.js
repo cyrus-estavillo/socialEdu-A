@@ -74,7 +74,15 @@ const Search = () => {
             </div>
             {posts.length > 0 && (
                 posts.map((post) => (
-                    <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} likeCount={post.likes}/>
+                    <Post 
+                    postID={post._id} 
+                    authorID={post.author} 
+                    text={post.text} 
+                    comments={post.comment}
+                    tags={post.tags} 
+                    likeCount={post.likes}
+                    date={post.date}
+                    />
                 ))
             )}
             {users.length > 0 && (
@@ -90,6 +98,7 @@ const Search = () => {
                                     comments={userPost.comment}
                                     tags={userPost.tags}
                                     likeCount={userPost.likes}
+                                    date={userPost.date}
                                 />
                             ))
                         ) : (
