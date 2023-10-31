@@ -133,12 +133,12 @@ const Profile = () => {
                     </Box>
                     <TabPanel value="1">
                         {userPost.map((post) => (
-                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} />
+                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} likeCount={post.likes}/>
                         ))}
                     </TabPanel>
                     <TabPanel value="2">
                         {userLikedPosts.map((post) => (
-                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} />
+                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} likeCount={post.likes} />
                         ))}
                     </TabPanel>
                 </TabContext>

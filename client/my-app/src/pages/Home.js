@@ -198,7 +198,7 @@ const Home = () => {
                     </Box>
                     <TabPanel value="1">
                         {followingposts.map((post) => (
-                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} />
+                            <Post postID={post._id} authorID={post.author} text={post.text} comments={post.comment} tags={post.tags} likeCount={post.likes}/>
                         ))}
                         <h1>Add them to Following</h1>
                         <Stack direction="row" spacing={1}>
@@ -235,7 +235,7 @@ const Home = () => {
                             </div>)}
                         {userDetails?.preferences.length > 0 && (
                             recomPosts.map((recom) => (
-                                <Post postID={recom._id} authorID={recom.author} text={recom.text} comments={recom.comment} tags={recom.tags} />
+                                <Post postID={recom._id} authorID={recom.author} text={recom.text} comments={recom.comment} tags={recom.tags} likeCount={recom.likes}/>
                             )
                             ))}
                     </TabPanel>

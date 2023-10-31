@@ -211,15 +211,18 @@ const Post = (props) => {
                     </Stack>
                     <CardActions sx={{ justifyContent: "space-evenly" }}>
                         <IconButton onClick={handleOpen}><ForumOutlinedIcon /></IconButton>
-                        {likedPost ? (
-                            <IconButton onClick={likeButtonClick}>
-                                <FavoriteIcon sx={{ color: "red" }} />
-                            </IconButton>
-                        ) : (
-                            <IconButton onClick={likeButtonClick}>
-                                <FavoriteBorderIcon />
-                            </IconButton>
-                        )}
+                        <Stack direction="row">
+                            {likedPost ? (
+                                <IconButton onClick={likeButtonClick}>
+                                    <FavoriteIcon sx={{ color: "red" }} />
+                                </IconButton>
+                            ) : (
+                                <IconButton onClick={likeButtonClick}>
+                                    <FavoriteBorderIcon />
+                                </IconButton>
+                            )}
+                            <p>{props.likeCount}</p>
+                        </Stack>
                         {showComments ? (<IconButton onClick={popComments}>
                             <ExpandLessIcon />
                         </IconButton>) : (<IconButton onClick={popComments}>
