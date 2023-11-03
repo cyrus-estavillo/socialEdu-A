@@ -30,6 +30,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea, CardActions } from '@mui/material';
+import {Select} from '@mui/material';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -168,9 +169,7 @@ const Post = (props) => {
         }
     }
 
-    console.log("Properties Date: ", props.date);
     var date = new Date(props.date);
-    console.log("Date1: ", date);
 
     return (
         <div>

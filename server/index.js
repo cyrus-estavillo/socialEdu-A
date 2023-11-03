@@ -588,6 +588,28 @@ app.post("/addPreferences", async (req, res) => {
   })
 })
 
+app.put("/editPreferences", async (req, res) => {
+  const { token } = req.cookies;
+  const { preferTags } = req.body;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        userSpecific.preferences = preferTags;
+        await userSpecific.save();
+        res.status(201).json("Successfully edited preferences");
+      }
+      catch (e) {
+        res.status(400).json("Error with Posting Preferences");
+      }
+    }
+  })
+})
+
 app.get("/getRecommendedPosts", async (req, res) => {
   const { token } = req.cookies;
   jwt.verify(token, secret, {}, async (err, info) => {

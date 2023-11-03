@@ -29,7 +29,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { CardActionArea, CardActions } from '@mui/material';
+import { CardActionArea, CardActions, InputLabel, MenuItem, ListItemText, Checkbox, Select, FormControl, OutlinedInput } from '@mui/material';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -42,6 +42,49 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Post from '../components/Post';
+import EditIcon from '@mui/icons-material/Edit';
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+const names = [
+    'Audio',
+    'Animals',
+    'Biology',
+    'Computer Science',
+    'Finance',
+    'Fitness',
+    'Food',
+    'History',
+    'Machine Learning',
+    'Math',
+    'Medicine',
+    'Music',
+    'Non-STEM',
+    'Philosophy',
+    'Physics',
+    'Software Engineering',
+    'Text',
+    'Tech',
+    'Video'
+];
+
+function getStyles(name, personName, theme) {
+    return {
+        fontWeight:
+            personName.indexOf(name) === -1
+                ? theme.typography.fontWeightRegular
+                : theme.typography.fontWeightMedium,
+    };
+}
 
 const Profile = () => {
     const { userInfo } = useContext(UserContext);
@@ -49,12 +92,32 @@ const Profile = () => {
     const [userPost, setUserPosts] = useState([]);
     const [userLikedPosts, setUserLikedPosts] = useState([]);
     const [userDetails, setUserDetails] = useState();
+    const [open, setOpen] = useState(false);
     const [userPreferences, setUserPreferences] = useState([]);
+    const [userPreferences1, setUserPreferences1] = useState(userPreferences);
 
     const userId = userInfo?.id;
 
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
+    };
+
+    const handleChange1 = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setUserPreferences1(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
     };
 
     const getUserPosts = async () => {
@@ -82,13 +145,19 @@ const Profile = () => {
         const data = await response.json();
         if (response.ok) {
             setUserDetails(data.userSpecific);
-            setUserPreferences(data.userSpecific.preferences);
+            setUserPreferences(data.userSpecific?.preferences);
+            console.log("User Preferences: ", userPreferences);
         }
     };
 
     useEffect(() => {
         getUserInformation();
     }, [userId])
+
+    useEffect(() => {
+        setUserPreferences1(userPreferences);
+      }, [userPreferences]);
+      
 
     const getUserLikedPosts = async () => {
         const response = await fetch('http://localhost:3001/userLikedPosts', {
@@ -106,18 +175,71 @@ const Profile = () => {
         getUserLikedPosts();
     }, [])
 
+    const editTags = async () => {
+        const response = await fetch('http://localhost:3001/editPreferences', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                preferTags: userPreferences1
+            })
+        })
+        const data = await response.json();
+        if (response.ok) {
+            window.location.reload();
+        }
+    }
+
     return (
         <div style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
             <h1>Name: {userDetails?.name}</h1>
             <h1>Username: @{userDetails?.username}</h1>
             <h1 style={{ textDecoration: "underline" }}>Preferred Tags </h1>
-            {userDetails?.preferences.length > 0 ? (
-                userPreferences.map((userP) => (
-                    <Chip label={userP} variant="outlined" sx={{ marginRight: 1 }} />
-                ))
-            ) : (
-                <h1>N/A</h1>
-            )}
+            <div sx={{ display: "flex" }}>
+                {userDetails?.preferences.length > 0 ? (
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                        {userPreferences.map((userP) => (
+                            <Chip label={userP} variant="outlined" sx={{ marginRight: 1 }} />
+                        ))}
+                        <IconButton><EditIcon onClick={handleOpen} /></IconButton>
+                    </div>
+                ) : (
+                    <h1>N/A</h1>
+                )}
+            </div>
+            <Dialog
+                open={open}
+                onClose={handleClose}>
+                <DialogTitle sx={{ fontWeight: "bold", textAlign: "center" }}>
+                    Edit the Tags
+                </DialogTitle>
+                <DialogContent >
+                    <FormControl sx={{ marginTop: 2, width: 300 }}>
+                        <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                        <Select
+                            labelId="demo-multiple-checkbox-label"
+                            id="demo-multiple-checkbox"
+                            multiple
+                            value={userPreferences1}
+                            onChange={handleChange1}
+                            input={<OutlinedInput label="Tag" />}
+                            renderValue={(selected) => selected.join(', ')}
+                            MenuProps={MenuProps}
+                        >
+                            {names.map((name) => (
+                                <MenuItem key={name} value={name}>
+                                    <Checkbox checked={userPreferences1.indexOf(name) > -1} />
+                                    <ListItemText primary={name} />
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button variant="contained" onClick={editTags}>SUBMIT</Button>
+                </DialogActions>
+            </Dialog>
             <Box sx={{ width: '100%', typography: 'body1', marginTop: 2 }}>
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -152,7 +274,7 @@ const Profile = () => {
                                 text={post.text}
                                 comments={post.comment}
                                 tags={post.tags}
-                                likeCount={post.likes} 
+                                likeCount={post.likes}
                                 date={post.date}
                             />
                         ))}
