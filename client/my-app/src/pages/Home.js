@@ -29,8 +29,16 @@ const Home = () => {
     const [userDetails, setUserDetails] = useState();
     const [recomPosts, setRecomPosts] = useState([]);
 
+    /*useEffect(() => {
+        const tabStore = localStorage.getItem("TabValue");
+        if(tabStore) {
+            setValue(tabStore); 
+        }
+    }, [])*/
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
+        localStorage.setItem("TabValue", newValue); 
     };
 
     const userId = userInfo?.id;

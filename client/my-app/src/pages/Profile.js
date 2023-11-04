@@ -106,8 +106,16 @@ const Profile = () => {
         setOpen(true);
     }
 
+    /*useEffect(() => {
+        const tabStore = localStorage.getItem("TabValue");
+        if(tabStore) {
+            setValue(tabStore); 
+        }
+    }, [])*/
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
+        localStorage.setItem("TabValue", newValue); 
     };
 
     const handleChange1 = (event) => {

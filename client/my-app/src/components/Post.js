@@ -30,7 +30,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea, CardActions } from '@mui/material';
-import {Select} from '@mui/material';
+import { Select } from '@mui/material';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -56,7 +56,7 @@ const Post = (props) => {
 
     const tagList = props.tags;
 
-    const [logged, setLogged] = useState(); 
+    const [logged, setLogged] = useState();
     const [likedPost, setLike] = useState(false);
     const [showComments, setComments] = useState(false);
     const [commentDes, setCommentDes] = useState([]);
@@ -82,7 +82,7 @@ const Post = (props) => {
             credentials: 'include'
         })
         const data = await response.json();
-        if(response.ok) {
+        if (response.ok) {
             setLogged(data.userSpecific);
         }
     }
@@ -200,7 +200,7 @@ const Post = (props) => {
 
     var date = new Date(props.date);
 
-    const followingList = logged?.following; 
+    const followingList = logged?.following;
     console.log(followingList);
 
     return (
@@ -230,8 +230,25 @@ const Post = (props) => {
                             <Stack direction="row">
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}</Typography>
-                                {followingList && (!followingList.includes(authorID) && authorID !== userInfoId) && (<Button variant="contained" sx={{borderRadius: 2}} onClick={addToFollowing}>Follow</Button>)}
-                                {followingList && (followingList.includes(authorID) && authorID !== userInfoId) && (<Button variant="contained" sx={{borderRadius: 2}} onClick={addToFollowing}>unFollow</Button>)}
+                                {followingList && (!followingList.includes(authorID) && authorID !== userInfoId)
+                                    && (
+                                        <Chip label="Follow" variant="outlined" onClick={addToFollowing}
+                                            sx={{ color: "white", backgroundColor: "black", marginLeft: 1, 
+                                            '&:hover': {
+                                                color: "black"
+                                              } }}
+                                        />
+                                    )}
+                                {followingList && (followingList.includes(authorID) && authorID !== userInfoId)
+                                    && (
+                                        <Chip label="Unfollow" variant="outlined" onClick={addToFollowing}
+                                            sx={{ color: "white", backgroundColor: "gray", marginLeft: 1, 
+                                            '&:hover': {
+                                                color: "black"
+                                                //color: "white"
+                                              } 
+                                         }} />
+                                    )}
                             </Stack>
                             <Stack direction="row">
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{date.toLocaleString().substring(0, 10)}</Typography>
