@@ -32,6 +32,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import AddIcon from '@mui/icons-material/Add';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -180,7 +181,7 @@ const Footer = () => {
                     >
                         <BottomNavigationAction href="/home" icon={<HomeRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/search" icon={<SearchRoundedIcon sx={{ color: "white" }} />} />
-                        <BottomNavigationAction onClick={handleOpen} icon={<EmojiObjectsRoundedIcon sx={{ color: "white" }} />} />
+                        <BottomNavigationAction onClick={handleOpen} icon={<AddIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/notification" icon={<NotificationsRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/profile" icon={<AccountCircleRoundedIcon sx={{ color: "white" }} />} />
                     </BottomNavigation>

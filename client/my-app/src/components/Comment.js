@@ -54,7 +54,7 @@ const Comment = (props) => {
     }
 
     return (
-            <Stack direction="row" justifyContent="space-between">
+            <Stack direction="row" justifyContent="center">
                 <p>{props.text}</p>
                 {userInfoId === props.author && (
                     <IconButton onClick={deleteComment}>

@@ -223,8 +223,8 @@ const Post = (props) => {
                     <Button variant="contained" onClick={postComment}>Post</Button>
                 </DialogActions>
             </Dialog>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-                <Card sx={{ width: "80%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <Card sx={{ width: "100%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
                     <CardContent>
                         <Stack direction="row" justifyContent="space-between">
                             <Stack direction="row">
