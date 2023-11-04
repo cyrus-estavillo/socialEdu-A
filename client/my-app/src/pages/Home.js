@@ -199,9 +199,9 @@ const Home = () => {
                             aria-label="lab API tabs example"
                             centered
                         >
-                            <Tab label="Following" value="1" sx={{ marginRight: 10 }} />
-                            <Tab label="For You" value="2" />
-                            {/*<Tab label="Community" value="3" />*/}
+                            <Tab label="Following" value="1" />
+                            <Tab label="For You" value="2" sx={{ marginLeft: 8, marginRight: 8 }} />
+                            <Tab label="Community" value="3" />
                         </TabList>
                     </Box>
                     <TabPanel value="1">
@@ -263,7 +263,9 @@ const Home = () => {
                             )
                             ))}
                     </TabPanel>
-                    {/*<TabPanel value="3">Item Three</TabPanel>*/}
+                    <TabPanel value="3">
+                        Item Three
+                    </TabPanel>
                 </TabContext>
             </Box>
         </div>
