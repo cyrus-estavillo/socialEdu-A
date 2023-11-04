@@ -440,7 +440,11 @@ app.post("/addFollowing/:id", async (req, res) => {
           res.status(201).json(`Added to Following ${id}`)
           return;
         }
-        res.status(400).json("Already added following")
+        else {
+          userSpecific.following = userSpecific.following.filter((fID) => fID.toString() !== id);
+          await userSpecific.save(); 
+          res.status(201).json("Already added following")
+        }
       }
       catch (e) {
         res.status(400).json("Error with Adding Following");

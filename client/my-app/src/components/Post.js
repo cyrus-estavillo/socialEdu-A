@@ -56,6 +56,7 @@ const Post = (props) => {
 
     const tagList = props.tags;
 
+    const [logged, setLogged] = useState(); 
     const [likedPost, setLike] = useState(false);
     const [showComments, setComments] = useState(false);
     const [commentDes, setCommentDes] = useState([]);
@@ -73,6 +74,22 @@ const Post = (props) => {
 
     const authorID = props.authorID;
     const postID = props.postID;
+
+    const loggedUser = async () => {
+        const response = await fetch(`http://localhost:3001/user/${userInfoId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if(response.ok) {
+            setLogged(data.userSpecific);
+        }
+    }
+
+    useEffect(() => {
+        loggedUser();
+    }, [userInfoId])
 
     const getAllComments = async () => {
         const response = await fetch(`http://localhost:3001/commentsByPost/${postID}`, {
@@ -169,7 +186,22 @@ const Post = (props) => {
         }
     }
 
+    const addToFollowing = async () => {
+        const response = await fetch(`http://localhost:3001/addFollowing/${authorID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            window.location.reload();
+        }
+    }
+
     var date = new Date(props.date);
+
+    const followingList = logged?.following; 
+    console.log(followingList);
 
     return (
         <div>
@@ -198,6 +230,8 @@ const Post = (props) => {
                             <Stack direction="row">
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}</Typography>
+                                {followingList && (!followingList.includes(authorID) && authorID !== userInfoId) && (<Button variant="contained" sx={{borderRadius: 2}} onClick={addToFollowing}>Follow</Button>)}
+                                {followingList && (followingList.includes(authorID) && authorID !== userInfoId) && (<Button variant="contained" sx={{borderRadius: 2}} onClick={addToFollowing}>unFollow</Button>)}
                             </Stack>
                             <Stack direction="row">
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{date.toLocaleString().substring(0, 10)}</Typography>

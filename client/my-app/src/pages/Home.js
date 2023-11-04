@@ -208,12 +208,12 @@ const Home = () => {
                                 date={post.date}
                             />
                         ))}
-                        <h1>Add them to Following</h1>
+                        {/*<h1>Add them to Following</h1>
                         <Stack direction="row" spacing={1}>
                             {potentialFollow.map((pot) => (
                                 <FollowingChip id={pot._id} name={pot.name} />
                             ))}
-                        </Stack>
+                            </Stack>*/}
                     </TabPanel>
                     <TabPanel value="2">
                         {userDetails?.preferences.length == 0 && (
