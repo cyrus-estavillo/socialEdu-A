@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const User = require("./models/User.js");
 const Post = require("./models/Post.js");
 const Comment = require("./models/Comment.js");
+const Group = require("./models/Group.js");
 
 mongoose.connect('mongodb+srv://pranetallu:2LJEQQ8JE7EISp0s@cluster0.fskrd0v.mongodb.net/');
 
@@ -212,7 +213,7 @@ app.get("/userLikedPosts", async (req, res) => {
       try {
         const userSpecific = await User.findById(info.id);
         const userLikedPosts = userSpecific.liked;
-        const postList = await Post.find({_id: {$in: userLikedPosts}}).sort({ date: -1, timestamp: -1 });
+        const postList = await Post.find({ _id: { $in: userLikedPosts } }).sort({ date: -1, timestamp: -1 });
         const result = [];
         for (var i = 0; i < postList.length; i++) {
           //const likedPosts = await Post.findById(userLikedPosts[i]);
@@ -442,7 +443,7 @@ app.post("/addFollowing/:id", async (req, res) => {
         }
         else {
           userSpecific.following = userSpecific.following.filter((fID) => fID.toString() !== id);
-          await userSpecific.save(); 
+          await userSpecific.save();
           res.status(201).json("Already added following")
         }
       }
@@ -658,9 +659,64 @@ app.get('/getPostsByQuery', async (req, res) => {
   }
 });
 
+// Groups
+app.get('/allGroups', async (req, res) => {
+  try {
+    const groupList = await Group.find();
+    res.status(201).json({ groupList });
+  }
+  catch (e) {
+    res.status(400).json("Error with getting groups");
+  }
+})
 
+app.post('/addGroup', async (req, res) => {
+  const { token } = req.cookies;
+  const { name } = req.body;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const groupSpecific = await Group.create({
+          name: name
+        })
+        res.status(201).json({ groupSpecific });
+      }
+      catch (e) {
+        res.status(400).json("Error with creating a group");
+      }
+    }
+  })
+});
 
-
+app.post('/joinGroup/:id', async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const groupSpecific = await Group.findById(id); 
+        if(groupSpecific.members.includes(info.id)) {
+          res.status(400).json("Already joined the group");
+          return; 
+        }
+        groupSpecific.members.push(info.id); 
+        await groupSpecific.save();
+        res.status(201).json({ groupSpecific });
+      }
+      catch (e) {
+        res.status(400).json("Error with joining group");
+      }
+    }
+  })
+})
 
 app.listen(3001, () => {
   console.log("Server is on port 3001..")

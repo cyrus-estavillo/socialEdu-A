@@ -20,6 +20,12 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Group from '../components/Group'; 
 
 const Home = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
@@ -28,17 +34,28 @@ const Home = () => {
     const [potentialFollow, setPotentialFollow] = useState([]);
     const [userDetails, setUserDetails] = useState();
     const [recomPosts, setRecomPosts] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [groupName, setGroup] = useState("");
+    const [allGroups, setAllGroups] = useState([]); 
 
-    /*useEffect(() => {
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    useEffect(() => {
         const tabStore = localStorage.getItem("TabValue");
         if(tabStore) {
             setValue(tabStore); 
         }
-    }, [])*/
+    }, [])
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
-        localStorage.setItem("TabValue", newValue); 
+        localStorage.setItem("TabValue", newValue);
     };
 
     const userId = userInfo?.id;
@@ -90,18 +107,6 @@ const Home = () => {
     useEffect(() => {
         followingPosts();
     }, [])
-
-    const addToFollowing = async (id) => {
-        const response = await fetch(`http://localhost:3001/addFollowing/${id}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        })
-        const data = await response.json();
-        if (response.ok) {
-            window.location.reload();
-        }
-    }
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -188,6 +193,37 @@ const Home = () => {
         getRecommendedPosts();
     })
 
+    const addGroup = async () => {
+        const response = await fetch(`http://localhost:3001/addGroup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                name: groupName
+            })
+        })
+        const data = await response.json();
+        if (response.ok) {
+            window.location.reload();
+        }
+    }
+
+    const getAllGroups = async() => {
+        const response = await fetch('http://localhost:3001/allGroups', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            setAllGroups(data.groupList);
+        }
+    }
+
+    useEffect(() => {
+        getAllGroups(); 
+    }, [])
+
     return (
         <div style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
             <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -264,7 +300,28 @@ const Home = () => {
                             ))}
                     </TabPanel>
                     <TabPanel value="3">
-                        Item Three
+                        <Dialog
+                            open={open}
+                            onClose={handleClose}>
+                            <DialogTitle sx={{ fontWeight: "bold", textAlign: "center" }}>
+                                Add a Group Chat!
+                            </DialogTitle>
+                            <DialogContent >
+                                <TextField sx={{ width: 400 }}
+                                    multiline
+                                    value={groupName}
+                                    onChange={(e) => setGroup(e.target.value)}
+                                />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleClose}>Cancel</Button>
+                                <Button variant="contained" onClick={addGroup}>Post</Button>
+                            </DialogActions>
+                        </Dialog>
+                        <Button variant="contained" onClick={handleOpen}>Add Group</Button>
+                        {allGroups.map((group) => (
+                            <Group groupID={group._id} groupName={group.name} />
+                        ))}
                     </TabPanel>
                 </TabContext>
             </Box>
