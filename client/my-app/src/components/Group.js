@@ -27,9 +27,23 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 
 const Group = (props) => {
+    const joinGroup = async () => {
+        const response = await fetch(`http://localhost:3001/joinGroup/${props.groupID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            window.location.reload();
+        }
+    }
     return(
         <div>
-            <p>{props.groupName}, {props.groupID}</p>
+            <Stack direction="row" sx={{justifyContent: "center", marginTop: 1}}>
+            <p>{props.groupName}</p>
+            <Button variant="contained" onClick={joinGroup}>Join</Button>
+            </Stack>
         </div>
     )
 };

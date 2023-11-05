@@ -12,7 +12,9 @@ const UserSchema = new Schema({
         postID: {type: Schema.Types.ObjectId, ref: 'Post'},    // id of the post commented / liked  
         sendingUser: {type: Schema.Types.ObjectId, ref: 'User'}, // id of the user who commented / liked (info.id)
         action: {type: String} // action type stored as string, either "liked" or "commented"
-    }]
+    }],
+    groups: [{type: Schema.Types.ObjectId, ref: 'Group'}]
+
 })
 
 const UserModel = model('User', UserSchema);

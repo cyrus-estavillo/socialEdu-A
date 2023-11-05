@@ -320,7 +320,9 @@ const Home = () => {
                         </Dialog>
                         <Button variant="contained" onClick={handleOpen}>Add Group</Button>
                         {allGroups.map((group) => (
+                            userDetails.groups && !userDetails.groups.includes(group._id) && (
                             <Group groupID={group._id} groupName={group.name} />
+                            )
                         ))}
                     </TabPanel>
                 </TabContext>

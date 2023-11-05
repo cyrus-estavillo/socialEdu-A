@@ -702,12 +702,15 @@ app.post('/joinGroup/:id', async (req, res) => {
     }
     else {
       try {
-        const groupSpecific = await Group.findById(id); 
+        const groupSpecific = await Group.findById(id);
+        const userSpecific = await User.findById(info.id);  
         if(groupSpecific.members.includes(info.id)) {
           res.status(400).json("Already joined the group");
           return; 
         }
         groupSpecific.members.push(info.id); 
+        userSpecific.groups.push(groupSpecific._id);
+        await userSpecific.save();
         await groupSpecific.save();
         res.status(201).json({ groupSpecific });
       }
