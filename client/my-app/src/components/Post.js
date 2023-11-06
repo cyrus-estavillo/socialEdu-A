@@ -160,20 +160,42 @@ const Post = (props) => {
         getAuthorDetailsOfPost();
     }, [])
 
+
+
     const postComment = async () => {
-        const response = await fetch(`http://localhost:3001/comment/${postID}`, {
-            method: 'POST',
+        // Fetch the username of the logged-in user
+        const userResponse = await fetch(`http://localhost:3001/user/${userInfoId}`, {
+            method: 'GET',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({
-                text: commentPos
+            credentials: 'include'
+        });
+        const userData = await userResponse.json();
+
+        // Check if the userResponse is ok and userData contains the user object
+        if (userResponse.ok && userData && userData.userSpecific) {
+            const username = userData.userSpecific.username; // Get the username from the user data
+
+            const response = await fetch(`http://localhost:3001/comment/${postID}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    text: `@${username}: ${commentPos}`
+                })
             })
-        })
-        if (response.ok) {
-            handleClose();
-            window.location.reload();
+            if (response.ok) {
+                setComments(true); // Set showComments to true to display the comments
+                setCommentPos(""); // Clear the comment input field
+                handleClose();
+                await getAllComments(); // Refresh comments without reloading the page
+            }
+        }
+        else {
+            // Handle the error if the user data could not be fetched
+            console.error('Failed to fetch user data');
         }
     }
+
 
     const deletePost = async () => {
         const response = await fetch(`http://localhost:3001/post/${postID}`, {
@@ -198,10 +220,10 @@ const Post = (props) => {
         }
     }
 
+    
     var date = new Date(props.date);
 
     const followingList = logged?.following;
-    console.log(followingList);
 
     return (
         <div>
@@ -223,7 +245,7 @@ const Post = (props) => {
                     <Button variant="contained" onClick={postComment}>Post</Button>
                 </DialogActions>
             </Dialog>
-            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "middle" }}>
                 <Card sx={{ width: "100%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
                     <CardContent>
                         <Stack direction="row" justifyContent="space-between">
@@ -241,8 +263,8 @@ const Post = (props) => {
                                     )}
                                 {followingList && (followingList.includes(authorID) && authorID !== userInfoId)
                                     && (
-                                        <Chip label="Unfollow" variant="outlined" onClick={addToFollowing}
-                                            sx={{ color: "white", backgroundColor: "gray", marginLeft: 1, 
+                                        <Chip label="Following" variant="outlined" onClick={addToFollowing}
+                                            sx={{ color: "white", backgroundColor: "#3576cb", marginLeft: 1, 
                                             '&:hover': {
                                                 color: "black"
                                                 //color: "white"

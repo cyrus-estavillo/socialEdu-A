@@ -55,7 +55,7 @@ const Header = () => {
     const username = userInfo?.username;
 
     return (
-        <div>
+        <div style={{ zIndex: 1000, position: 'fixed', top: 0, width: '100%', backgroundColor: 'white' }}>
             {!username &&
                 (<div style={{
                     minHeight: "80px", height: "20%", display: "flex",

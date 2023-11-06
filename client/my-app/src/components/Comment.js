@@ -54,8 +54,10 @@ const Comment = (props) => {
     }
 
     return (
-            <Stack direction="row" justifyContent="center">
-                <p>{props.text}</p>
+            <Stack direction="row" justifyContent="flex-start" sx={{ paddingLeft: '30px' }}>
+                <p>
+                    <span style={{ color: 'blue' }}>{props.authorUsername}</span> {props.text}
+                </p>
                 {userInfoId === props.author && (
                     <IconButton onClick={deleteComment}>
                         <DeleteIcon />

@@ -199,9 +199,9 @@ const Profile = () => {
     }
 
     return (
-        <div style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
-            <h1>Name: {userDetails?.name}</h1>
-            <h1>Username: @{userDetails?.username}</h1>
+        <div style={{ height: "50%", minHeight: "500px", marginBottom: 40, paddingTop: '150px' }}>
+            <h1>{userDetails?.name}</h1>
+            <h1 style={{ color: "#3576cb" }}>@{userDetails?.username}</h1>
             <h1 style={{ textDecoration: "underline" }}>Preferred Tags </h1>
             <div sx={{ display: "flex" }}>
                 {userDetails?.preferences.length > 0 ? (
