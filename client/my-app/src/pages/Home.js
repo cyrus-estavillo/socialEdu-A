@@ -25,7 +25,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Group from '../components/Group'; 
+import Group from '../components/Group';
+import GroupView from '../components/GroupView';
 
 const Home = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
@@ -36,7 +37,9 @@ const Home = () => {
     const [recomPosts, setRecomPosts] = useState([]);
     const [open, setOpen] = useState(false);
     const [groupName, setGroup] = useState("");
-    const [allGroups, setAllGroups] = useState([]); 
+    const [allGroups, setAllGroups] = useState([]);
+    const [userGroups, setUserGroups] = useState([]);
+    const [unjoinedGroups, setUnJoinedGroups] = useState([]);
 
     const handleClose = () => {
         setOpen(false);
@@ -48,8 +51,8 @@ const Home = () => {
 
     useEffect(() => {
         const tabStore = localStorage.getItem("TabValue");
-        if(tabStore) {
-            setValue(tabStore); 
+        if (tabStore) {
+            setValue(tabStore);
         }
     }, [])
 
@@ -208,7 +211,7 @@ const Home = () => {
         }
     }
 
-    const getAllGroups = async() => {
+    const getAllGroups = async () => {
         const response = await fetch('http://localhost:3001/allGroups', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
@@ -221,7 +224,39 @@ const Home = () => {
     }
 
     useEffect(() => {
-        getAllGroups(); 
+        getAllGroups();
+    }, [])
+
+    const groupsPerUser = async () => {
+        const response = await fetch('http://localhost:3001/groupsperuser', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            setUserGroups(data.groupsSpecific);
+        }
+    }
+
+    useEffect(() => {
+        groupsPerUser();
+    }, [])
+
+    const unJoinedGroups = async () => {
+        const response = await fetch('http://localhost:3001/unjoinedGroups', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            setUnJoinedGroups(data.groupsList);
+        }
+    }
+
+    useEffect(() => {
+        unJoinedGroups();
     }, [])
 
 
@@ -342,6 +377,8 @@ const Home = () => {
                             ))}
                         </TabPanel>
                     </div>
+                    </TabPanel>
+                    
                 </TabContext>
             </Box>
         </div>

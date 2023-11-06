@@ -12,6 +12,7 @@ import Footer from './components/Footer';
 import Notification from './pages/Notification';
 import Profile from './pages/Profile';
 import Search from './pages/Search';
+import ViewGroup from './pages/ViewGroup';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/posts/:query" element={<QueryPosts />} />
             <Route path="/notification" element={<Notification />}/>
             <Route path="/profile" element={<Profile />}/>
+            <Route path="/viewGroup/:id" element={<ViewGroup />}/>
           </Routes>
           <Footer />
         </UserContextProvider>

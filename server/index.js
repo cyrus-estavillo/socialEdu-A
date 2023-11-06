@@ -702,17 +702,62 @@ app.post('/joinGroup/:id', async (req, res) => {
     }
     else {
       try {
-        const groupSpecific = await Group.findById(id); 
-        if(groupSpecific.members.includes(info.id)) {
+        const groupSpecific = await Group.findById(id);
+        const userSpecific = await User.findById(info.id);
+        if (groupSpecific.members.includes(info.id)) {
           res.status(400).json("Already joined the group");
-          return; 
+          return;
         }
-        groupSpecific.members.push(info.id); 
+        groupSpecific.members.push(info.id);
+        userSpecific.groups.push(groupSpecific._id);
+        await userSpecific.save();
         await groupSpecific.save();
         res.status(201).json({ groupSpecific });
       }
       catch (e) {
         res.status(400).json("Error with joining group");
+      }
+    }
+  })
+})
+
+app.get('/groupsperuser', async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        const userGroups = userSpecific.groups; 
+        const groupsSpecific = await Group.find({_id : {$in: userGroups}});
+        res.status(201).json({ groupsSpecific });
+      }
+      catch (e) {
+        res.status(400).json("Error with getting groups for user");
+      }
+    }
+  })
+})
+
+app.get('/unjoinedGroups', async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        const userGroups = userSpecific.groups;
+        const groupsList = await Group.find({ _id: { $nin: userGroups } });
+        res.status(201).json({ groupsList });
+      }
+      catch (e) {
+        res.status(400).json("Error with getting rest of the groups");
       }
     }
   })
