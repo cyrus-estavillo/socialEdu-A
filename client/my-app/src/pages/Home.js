@@ -260,8 +260,8 @@ const Home = () => {
     }, [])
 
 
-    const HEADER_HEIGHT = '140px'; 
-    const TABS_HEIGHT = '30px'; 
+    const HEADER_HEIGHT = '140px';
+    const TABS_HEIGHT = '30px';
 
 
 
@@ -269,15 +269,15 @@ const Home = () => {
         <div style={{ paddingTop: HEADER_HEIGHT }}>
             <Box sx={{ width: '100%', typography: 'body1', position: 'relative' }}>
                 <TabContext value={value}>
-                    <Box sx={{ 
-                        position: 'fixed', 
-                        top: HEADER_HEIGHT, 
-                        left: 0, 
-                        right: 0, 
+                    <Box sx={{
+                        position: 'fixed',
+                        top: HEADER_HEIGHT,
+                        left: 0,
+                        right: 0,
                         zIndex: 1100, // Ensure the tabs are above other content
                         backgroundColor: '#fff', // Match the background color of the tabs
-                        borderBottom: 1, 
-                        borderColor: 'divider' 
+                        borderBottom: 1,
+                        borderColor: 'divider'
                     }}>
                         <TabList
                             value={value}
@@ -290,7 +290,7 @@ const Home = () => {
                             <Tab label="Community" value="3" />
                         </TabList>
                     </Box>
-                    <div style={{ 
+                    <div style={{
                         paddingTop: '50px', // Adjust the padding to match the height of the header and tabs
                     }}>
                         <TabPanel value="1" style={{ overflow: 'auto' }}>
@@ -372,13 +372,19 @@ const Home = () => {
                                 </DialogActions>
                             </Dialog>
                             <Button variant="contained" onClick={handleOpen}>Add Group</Button>
-                            {allGroups.map((group) => (
+                            <h1>My Groups</h1>
+                            {userGroups && (userGroups.map((group) => (
+                                <GroupView groupID={group._id} groupName={group.name} groupMembers={group.members.length} />
+                            ))
+                            )}
+                            <h1>Recommended groups</h1>
+                            {unjoinedGroups && unjoinedGroups.map((group) => (
+                                //userDetails.groups && !userDetails.groups.includes(group._id) && (
                                 <Group groupID={group._id} groupName={group.name} />
+                                //)
                             ))}
                         </TabPanel>
                     </div>
-                    </TabPanel>
-                    
                 </TabContext>
             </Box>
         </div>
