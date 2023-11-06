@@ -224,11 +224,26 @@ const Home = () => {
         getAllGroups(); 
     }, [])
 
+
+    const HEADER_HEIGHT = '140px'; 
+    const TABS_HEIGHT = '30px'; 
+
+
+
     return (
-        <div style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
-            <Box sx={{ width: '100%', typography: 'body1' }}>
+        <div style={{ paddingTop: HEADER_HEIGHT }}>
+            <Box sx={{ width: '100%', typography: 'body1', position: 'relative' }}>
                 <TabContext value={value}>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Box sx={{ 
+                        position: 'fixed', 
+                        top: HEADER_HEIGHT, 
+                        left: 0, 
+                        right: 0, 
+                        zIndex: 1100, // Ensure the tabs are above other content
+                        backgroundColor: '#fff', // Match the background color of the tabs
+                        borderBottom: 1, 
+                        borderColor: 'divider' 
+                    }}>
                         <TabList
                             value={value}
                             onChange={handleChange}
@@ -240,93 +255,99 @@ const Home = () => {
                             <Tab label="Community" value="3" />
                         </TabList>
                     </Box>
-                    <TabPanel value="1">
-                        {followingposts.map((post) => (
-                            <Post
-                                postID={post._id}
-                                authorID={post.author}
-                                text={post.text}
-                                comments={post.comment}
-                                tags={post.tags}
-                                likeCount={post.likes}
-                                date={post.date}
-                            />
-                        ))}
-                        {/*<h1>Add them to Following</h1>
-                        <Stack direction="row" spacing={1}>
-                            {potentialFollow.map((pot) => (
-                                <FollowingChip id={pot._id} name={pot.name} />
-                            ))}
-                            </Stack>*/}
-                    </TabPanel>
-                    <TabPanel value="2">
-                        {userDetails?.preferences.length == 0 && (
-                            <div>
-                                <h1>Choose preferred tags to view similar posts</h1>
-                                <FormControl sx={{ width: 300 }}>
-                                    <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
-                                    <Select
-                                        labelId="demo-multiple-checkbox-label"
-                                        id="demo-multiple-checkbox"
-                                        multiple
-                                        value={personName}
-                                        onChange={handleChange1}
-                                        input={<OutlinedInput label="Tag" />}
-                                        renderValue={(selected) => selected.join(', ')}
-                                        MenuProps={MenuProps}
-                                    >
-                                        {names.map((name) => (
-                                            <MenuItem key={name} value={name}>
-                                                <Checkbox checked={personName.indexOf(name) > -1} />
-                                                <ListItemText primary={name} />
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                    <Button variant="contained" sx={{ marginTop: 2 }} onClick={addPreferredTags}>SUBMIT</Button>
-                                </FormControl>
-                            </div>)}
-                        {userDetails?.preferences.length > 0 && (
-                            recomPosts.map((recom) => (
+                    <div style={{ 
+                        paddingTop: '50px', // Adjust the padding to match the height of the header and tabs
+                    }}>
+                        <TabPanel value="1" style={{ overflow: 'auto' }}>
+                            {followingposts.map((post) => (
                                 <Post
-                                    postID={recom._id}
-                                    authorID={recom.author}
-                                    text={recom.text}
-                                    comments={recom.comment}
-                                    tags={recom.tags}
-                                    likeCount={recom.likes}
-                                    date={recom.date}
+                                    postID={post._id}
+                                    authorID={post.author}
+                                    text={post.text}
+                                    comments={post.comment}
+                                    tags={post.tags}
+                                    likeCount={post.likes}
+                                    date={post.date}
                                 />
-                            )
                             ))}
-                    </TabPanel>
-                    <TabPanel value="3">
-                        <Dialog
-                            open={open}
-                            onClose={handleClose}>
-                            <DialogTitle sx={{ fontWeight: "bold", textAlign: "center" }}>
-                                Add a Group Chat!
-                            </DialogTitle>
-                            <DialogContent >
-                                <TextField sx={{ width: 400 }}
-                                    multiline
-                                    value={groupName}
-                                    onChange={(e) => setGroup(e.target.value)}
-                                />
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleClose}>Cancel</Button>
-                                <Button variant="contained" onClick={addGroup}>Post</Button>
-                            </DialogActions>
-                        </Dialog>
-                        <Button variant="contained" onClick={handleOpen}>Add Group</Button>
-                        {allGroups.map((group) => (
-                            <Group groupID={group._id} groupName={group.name} />
-                        ))}
-                    </TabPanel>
+                            {/*<h1>Add them to Following</h1>
+                            <Stack direction="row" spacing={1}>
+                                {potentialFollow.map((pot) => (
+                                    <FollowingChip id={pot._id} name={pot.name} />
+                                ))}
+                                </Stack>*/}
+                        </TabPanel>
+                        <TabPanel value="2" style={{ overflow: 'auto' }}>
+                            {userDetails?.preferences.length == 0 && (
+                                <div>
+                                    <h1>Choose preferred tags to view similar posts</h1>
+                                    <FormControl sx={{ width: 300 }}>
+                                        <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                                        <Select
+                                            labelId="demo-multiple-checkbox-label"
+                                            id="demo-multiple-checkbox"
+                                            multiple
+                                            value={personName}
+                                            onChange={handleChange1}
+                                            input={<OutlinedInput label="Tag" />}
+                                            renderValue={(selected) => selected.join(', ')}
+                                            MenuProps={MenuProps}
+                                        >
+                                            {names.map((name) => (
+                                                <MenuItem key={name} value={name}>
+                                                    <Checkbox checked={personName.indexOf(name) > -1} />
+                                                    <ListItemText primary={name} />
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                        <Button variant="contained" sx={{ marginTop: 2 }} onClick={addPreferredTags}>SUBMIT</Button>
+                                    </FormControl>
+                                </div>)}
+                            {userDetails?.preferences.length > 0 && (
+                                recomPosts.map((recom) => (
+                                    <Post
+                                        postID={recom._id}
+                                        authorID={recom.author}
+                                        text={recom.text}
+                                        comments={recom.comment}
+                                        tags={recom.tags}
+                                        likeCount={recom.likes}
+                                        date={recom.date}
+                                    />
+                                )
+                                ))}
+                        </TabPanel>
+                        <TabPanel value="3" style={{ overflow: 'auto' }}>
+                            <Dialog
+                                open={open}
+                                onClose={handleClose}>
+                                <DialogTitle sx={{ fontWeight: "bold", textAlign: "center" }}>
+                                    Add a Group Chat!
+                                </DialogTitle>
+                                <DialogContent >
+                                    <TextField sx={{ width: 400 }}
+                                        multiline
+                                        value={groupName}
+                                        onChange={(e) => setGroup(e.target.value)}
+                                    />
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleClose}>Cancel</Button>
+                                    <Button variant="contained" onClick={addGroup}>Post</Button>
+                                </DialogActions>
+                            </Dialog>
+                            <Button variant="contained" onClick={handleOpen}>Add Group</Button>
+                            {allGroups.map((group) => (
+                                <Group groupID={group._id} groupName={group.name} />
+                            ))}
+                        </TabPanel>
+                    </div>
                 </TabContext>
             </Box>
         </div>
-    )
-};
+    );
+}
+
+
 
 export default Home;
