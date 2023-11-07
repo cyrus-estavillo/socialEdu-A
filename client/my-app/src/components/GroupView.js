@@ -2,7 +2,7 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import { Button, Stack} from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -29,12 +29,12 @@ const GroupView = (props) => {
     return (
         <div>
             <Box style={{border: "2px solid #000"}}>
-                <Stack direction="row">
+                <Stack direction="row" sx={{justifyContent: "space-between"}}>
                     <Stack direction="column">
                         <h2>{props.groupName}</h2>
                         <h2>Members: {props.groupMembers}</h2>
                     </Stack>
-                    <Button href="/viewPage"></Button>
+                    <Button variant="contained" href="/viewGroup">View</Button>
                 </Stack>
             </Box>
         </div>

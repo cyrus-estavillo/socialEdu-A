@@ -266,7 +266,7 @@ const Home = () => {
 
 
     return (
-        <div style={{ paddingTop: HEADER_HEIGHT }}>
+        <div style={{ paddingTop: HEADER_HEIGHT, marginBottom: 35 }}>
             <Box sx={{ width: '100%', typography: 'body1', position: 'relative' }}>
                 <TabContext value={value}>
                     <Box sx={{

@@ -23,6 +23,7 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={<Main />}/>
+            <Route path="/viewGroup" element={<ViewGroup />}/>
             <Route path="/signup" element={<Signup />}/>
             <Route path="/login" element={<Login />}/>
             <Route path="/home" element={<Home />}/>
@@ -30,7 +31,6 @@ function App() {
             <Route path="/posts/:query" element={<QueryPosts />} />
             <Route path="/notification" element={<Notification />}/>
             <Route path="/profile" element={<Profile />}/>
-            <Route path="/viewGroup/:id" element={<ViewGroup />}/>
           </Routes>
           <Footer />
         </UserContextProvider>

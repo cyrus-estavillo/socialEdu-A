@@ -670,6 +670,17 @@ app.get('/allGroups', async (req, res) => {
   }
 })
 
+app.get('/group/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const groupSpecific = await Group.findById(id);
+    res.status(201).json({ groupSpecific });
+  }
+  catch (e) {
+    res.status(400).json("Error with getting group details");
+  }
+})
+
 app.post('/addGroup', async (req, res) => {
   const { token } = req.cookies;
   const { name } = req.body;
@@ -731,8 +742,8 @@ app.get('/groupsperuser', async (req, res) => {
     else {
       try {
         const userSpecific = await User.findById(info.id);
-        const userGroups = userSpecific.groups; 
-        const groupsSpecific = await Group.find({_id : {$in: userGroups}});
+        const userGroups = userSpecific.groups;
+        const groupsSpecific = await Group.find({ _id: { $in: userGroups } });
         res.status(201).json({ groupsSpecific });
       }
       catch (e) {
