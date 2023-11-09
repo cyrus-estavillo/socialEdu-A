@@ -790,6 +790,7 @@ app.post('/addMessage/:id', async (req, res) => {
           content: message,
           author: info.id
         }); 
+        await groupSpecific.save();
         res.status(201).json({ groupSpecific });
       }
       catch (e) {
