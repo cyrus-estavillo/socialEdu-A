@@ -37,6 +37,22 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import DeleteIcon from '@mui/icons-material/Delete';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
+import Divider from '@mui/material/Divider';
+import { styled, useTheme } from '@mui/material/styles';
+import Drawer from '@mui/material/Drawer';
+import MuiAppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+
 
 const Message = (props) => {
     const [userDetails, setUserDetails] = useState();
@@ -63,8 +79,8 @@ const Message = (props) => {
             <Card sx={{ width: "100%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
                 <CardContent>
                     <Stack direction="row">
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{userDetails.name}</Typography>
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{userDetails.username}</Typography>
+                        <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{userDetails?.name}</Typography>
+                        <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{userDetails?.username}</Typography>
                     </Stack>
                     <Stack direction="row">
                         <p>{props.content}</p>

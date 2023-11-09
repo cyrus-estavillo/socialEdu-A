@@ -15,6 +15,12 @@ const Header = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
     const navigate = useNavigate();
 
+    const location = useLocation();
+    const pathname = location.pathname;
+    console.log(pathname);
+
+    
+
     const getProfile = async () => {
         const response = await fetch('http://localhost:3001/profile', {
             method: 'GET',
@@ -28,13 +34,6 @@ const Header = () => {
     useEffect(() => {
         getProfile();
     }, []);
-
-    // Add this line to get the current location
-    const location = useLocation();
-
-    if(location.pathname === "/") {
-        return null;  // Don't render anything if on the landing page
-    }
 
 
     const logout = async () => {
