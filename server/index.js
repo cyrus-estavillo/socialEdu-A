@@ -774,6 +774,31 @@ app.get('/unjoinedGroups', async (req, res) => {
   })
 })
 
+app.post('/addMessage/:id', async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  const { message } = req.body;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const groupSpecific = await Group.findById(id);
+        groupSpecific.messages.push({
+          content: message,
+          author: info.id
+        }); 
+        res.status(201).json({ groupSpecific });
+      }
+      catch (e) {
+        res.status(400).json("Error with sending a message");
+      }
+    }
+  })
+})
+
 app.listen(3001, () => {
   console.log("Server is on port 3001..")
 })

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
-import { Button, Stack} from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -26,8 +26,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 const ViewGroup = () => {
-    /*const { id } = useParams();
-    const [groupDetails, setGroupDetails] = useState(); 
+    const { id } = useParams();
+    const [groupDetails, setGroupDetails] = useState();
 
     const getGroupDetails = async () => {
         const response = await fetch(`http://localhost:3001/group/${id}`, {
@@ -44,11 +44,11 @@ const ViewGroup = () => {
 
     useEffect(() => {
         getGroupDetails();
-    }, [id])*/
-
-    return(
-        <div>
-            <h1>dfdsfds</h1>
+    }, [id])
+    return (
+        <div style={{ height: "50%", minHeight: "500px", marginBottom: 40, paddingTop: '150px' }}>
+            <h1>{groupDetails?.name}</h1>
+            <p>Members: {groupDetails?.members.length}</p>
         </div>
     );
 };

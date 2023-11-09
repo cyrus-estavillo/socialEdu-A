@@ -34,7 +34,7 @@ const GroupView = (props) => {
                         <h2>{props.groupName}</h2>
                         <h2>Members: {props.groupMembers}</h2>
                     </Stack>
-                    <Button variant="contained" href="/viewGroup">View</Button>
+                    <Button variant="contained" href={`/viewGroup/${props.groupID}`}>View</Button>
                 </Stack>
             </Box>
         </div>

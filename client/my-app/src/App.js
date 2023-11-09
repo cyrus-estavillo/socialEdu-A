@@ -23,7 +23,7 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={<Main />}/>
-            <Route path="/viewGroup" element={<ViewGroup />}/>
+            <Route path="/viewGroup/:id" element={<ViewGroup />}/>
             <Route path="/signup" element={<Signup />}/>
             <Route path="/login" element={<Login />}/>
             <Route path="/home" element={<Home />}/>
