@@ -143,7 +143,13 @@ const Post = (props) => {
             credentials: 'include'
         })
         const data = await response.json();
-        window.location.reload();
+
+        if (response.ok) {
+            setLike(!likedPost);
+        }
+        else {
+            console.error('Failed to like the post');
+        }
     }
 
     const getAuthorDetailsOfPost = async () => {
