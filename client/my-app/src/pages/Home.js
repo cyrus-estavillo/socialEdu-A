@@ -301,7 +301,7 @@ const Home = () => {
                         >
                             <Tab label="Following" value="1" />
                             <Tab label="For You" value="2" sx={{ marginLeft: 8, marginRight: 8 }} />
-                            <Tab label="Community" value="3" />
+                            {/*<Tab label="Community" value="3" />*/}
                         </TabList>
                     </Box>
                     <div style={{
@@ -366,7 +366,7 @@ const Home = () => {
                                 )
                                 ))}
                         </TabPanel>
-                        <TabPanel value="3" style={{ overflow: 'auto' }}>
+                        {/*<TabPanel value="3" style={{ overflow: 'auto' }}>
                             <Dialog
                                 open={open}
                                 onClose={handleClose}>
@@ -397,7 +397,7 @@ const Home = () => {
                                 <Group groupID={group._id} groupName={group.name} />
                                 //)
                             ))}
-                        </TabPanel>
+                            </TabPanel>*/}
                     </div>
                 </TabContext>
             </Box>
