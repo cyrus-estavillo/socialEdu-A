@@ -2,7 +2,7 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import { Button, IconButton } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -226,7 +226,7 @@ const Post = (props) => {
         }
     }
 
-    
+
     var date = new Date(props.date);
 
     const followingList = logged?.following;
@@ -257,25 +257,31 @@ const Post = (props) => {
                         <Stack direction="row" justifyContent="space-between">
                             <Stack direction="row">
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>
-                                <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}</Typography>
+                                <Link to={`/otherProfilePage/${authorID}`}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}
+                                    </Typography>
+                                </Link>
                                 {followingList && (!followingList.includes(authorID) && authorID !== userInfoId)
                                     && (
                                         <Chip label="Follow" variant="outlined" onClick={addToFollowing}
-                                            sx={{ color: "white", backgroundColor: "black", marginLeft: 1, 
-                                            '&:hover': {
-                                                color: "black"
-                                              } }}
+                                            sx={{
+                                                color: "white", backgroundColor: "black", marginLeft: 1,
+                                                '&:hover': {
+                                                    color: "black"
+                                                }
+                                            }}
                                         />
                                     )}
                                 {followingList && (followingList.includes(authorID) && authorID !== userInfoId)
                                     && (
                                         <Chip label="Following" variant="outlined" onClick={addToFollowing}
-                                            sx={{ color: "white", backgroundColor: "#3576cb", marginLeft: 1, 
-                                            '&:hover': {
-                                                color: "black"
-                                                //color: "white"
-                                              } 
-                                         }} />
+                                            sx={{
+                                                color: "white", backgroundColor: "#3576cb", marginLeft: 1,
+                                                '&:hover': {
+                                                    color: "black"
+                                                    //color: "white"
+                                                }
+                                            }} />
                                     )}
                             </Stack>
                             <Stack direction="row">
