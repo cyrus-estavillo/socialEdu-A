@@ -58,7 +58,7 @@ const OtherProfilePage = () => {
     };
 
     const getUserPosts = async () => {
-        const response = await fetch('http://localhost:3001/getUserPosts', {
+        const response = await fetch(`http://localhost:3001/getUserPosts/${id}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'

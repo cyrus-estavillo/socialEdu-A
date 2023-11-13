@@ -228,6 +228,33 @@ app.get("/userLikedPosts", async (req, res) => {
   })
 })
 
+app.get("/userLikedPosts/:id", async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params; 
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(id);
+        const userLikedPosts = userSpecific.liked;
+        const postList = await Post.find({ _id: { $in: userLikedPosts } }).sort({ date: -1, timestamp: -1 });
+        const result = [];
+        for (var i = 0; i < postList.length; i++) {
+          //const likedPosts = await Post.findById(userLikedPosts[i]);
+          result.push(postList[i]);
+        }
+        res.status(201).json({ result });
+      }
+      catch (e) {
+        res.status(400).json("Error with getting the liked posts");
+      }
+    }
+  })
+})
+
 app.get("/userLiked", async (req, res) => {
   const { token } = req.cookies;
   jwt.verify(token, secret, {}, async (err, info) => {
@@ -493,6 +520,27 @@ app.get("/getUserPosts", async (req, res) => {
       try {
         const postLists = await Post.find().sort({ date: -1, timestamp: -1 });
         const userPosts = postLists.filter((post) => post.author.toString() === info.id);
+        res.status(201).json({ userPosts });
+      }
+      catch (e) {
+        res.status(400).json("Could not get user's posts");
+      }
+    }
+  })
+})
+
+app.get("/getUserPosts/:id", async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params; 
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const postLists = await Post.find().sort({ date: -1, timestamp: -1 });
+        const userPosts = postLists.filter((post) => post.author.toString() === id);
         res.status(201).json({ userPosts });
       }
       catch (e) {
