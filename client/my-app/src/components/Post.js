@@ -40,6 +40,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Comment from './Comment';
 import Chip from '@mui/material/Chip';
+import TagsForPost from './TagsforPost';
 
 
 const Post = (props) => {
@@ -298,7 +299,7 @@ const Post = (props) => {
                         </Stack>
                         <Stack direction="row" sx={{ marginTop: 0.5 }}>
                             {tagList.map((tag) => (
-                                <Chip label={tag} variant="outlined" sx={{ marginRight: 1 }} />
+                                <TagsForPost tagName={tag} />
                             ))}
                         </Stack>
                         <CardActions sx={{ justifyContent: "space-evenly" }}>

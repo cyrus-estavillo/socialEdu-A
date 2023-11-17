@@ -230,7 +230,7 @@ app.get("/userLikedPosts", async (req, res) => {
 
 app.get("/userLikedPosts/:id", async (req, res) => {
   const { token } = req.cookies;
-  const { id } = req.params; 
+  const { id } = req.params;
   jwt.verify(token, secret, {}, async (err, info) => {
     if (err) {
       res.status(404).json("User Not Logged in");
@@ -531,7 +531,7 @@ app.get("/getUserPosts", async (req, res) => {
 
 app.get("/getUserPosts/:id", async (req, res) => {
   const { token } = req.cookies;
-  const { id } = req.params; 
+  const { id } = req.params;
   jwt.verify(token, secret, {}, async (err, info) => {
     if (err) {
       res.status(404).json("User Not Logged in");
@@ -837,12 +837,39 @@ app.post('/addMessage/:id', async (req, res) => {
         groupSpecific.messages.push({
           content: message,
           author: info.id
-        }); 
+        });
         await groupSpecific.save();
         res.status(201).json({ groupSpecific });
       }
       catch (e) {
         res.status(400).json("Error with sending a message");
+      }
+    }
+  })
+})
+
+app.post('/followTags', async (req, res) => {
+  const { token } = req.cookies;
+  const { tag } = req.body; 
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        if(userSpecific.preferences.includes(tag)) {
+          userSpecific.preferences = userSpecific.preferences.filter((tags) => tags !== tag);
+        }
+        else {
+          userSpecific.preferences.push(tag);
+        }
+        await userSpecific.save();
+        res.status(201).json("Tag followed/unfollowed"); 
+      }
+      catch (e) {
+        res.status(400).json("Error with following a tag");
       }
     }
   })
