@@ -145,8 +145,6 @@ const Post = (props) => {
             if (postResponse.ok) {
                 // Update like count in the state
                 setLikeCount(postData.postSpecific.likes); 
-                console.log(postData.postSpecific.likes);
-
             } else {
                 console.error('Failed to fetch updated post details');
             }
