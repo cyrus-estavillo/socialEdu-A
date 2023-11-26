@@ -51,6 +51,29 @@ const OtherProfilePage = () => {
     const [userPreferences, setUserPreferences] = useState([]);
     const [userLikedPosts, setUserLikedPosts] = useState([]);
     const [value, setValue] = useState("1");
+    const [logged, setLogged] = useState();
+    const [isFollowing, setIsFollowing] = useState(false);
+
+    const { userInfo } = useContext(UserContext);
+    const userInfoId = userInfo?.id;
+
+
+    const loggedUser = async () => {
+        const response = await fetch(`http://localhost:3001/user/${userInfoId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            setLogged(data.userSpecific);
+        }
+    }
+
+    useEffect(() => {
+        loggedUser();
+    }, [userInfoId])
+
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -107,11 +130,46 @@ const OtherProfilePage = () => {
         getUserLikedPosts();
     }, [])
 
+
+    const addToFollowing = async () => {
+        const response = await fetch(`http://localhost:3001/addFollowing/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            window.location.reload();
+        }
+    }
+
+
+    const followingList = logged?.following;
+
     return (
         <div style={{ height: "50%", minHeight: "500px", marginBottom: 40, paddingTop: '150px' }}>
             <h1>{userDetails?.name}</h1>
             <h1 style={{ color: "#3576cb" }}>@{userDetails?.username}</h1>
-            <h1 style={{ textDecoration: "underline" }}>Preferred Tags </h1>
+                    {followingList && (!followingList.includes(id) && id !== userInfoId)
+                        && (
+                            <Chip label="Follow" variant="outlined" onClick={addToFollowing}
+                                sx={{
+                                    color: "white", backgroundColor: "black", marginLeft: 1, '&:hover': {
+                                        color: "black"
+                                    }
+                                }}
+                            />
+                    )}
+                    {followingList && (followingList.includes(id) && id !== userInfoId)
+                        && (
+                            <Chip label="Following" variant="outlined" onClick={addToFollowing}
+                                sx={{
+                                    color: "white", backgroundColor: "#3576cb", marginLeft: 1, '&:hover': {
+                                        color: "black"
+                                    }
+                                }} />
+                    )}
+            <h2 style={{ textDecoration: "underline" }}>Preferred Tags </h2>
             <div sx={{ display: "flex" }}>
                 {userDetails?.preferences.length > 0 ? (
                     <div style={{ display: "flex", justifyContent: "center" }}>
@@ -120,7 +178,7 @@ const OtherProfilePage = () => {
                         ))}
                     </div>
                 ) : (
-                    <h1>N/A</h1>
+                    <h2>No Preferred Tags</h2>
                 )}
             </div>
             <Box sx={{ width: '100%', typography: 'body1', marginTop: 2 }}>
@@ -132,8 +190,8 @@ const OtherProfilePage = () => {
                             aria-label="lab API tabs example"
                             centered
                         >
-                            <Tab label="Your Posts" value="1" />
-                            <Tab label="Liked Posts" value="2" />
+                            <Tab label="Posts" value="1" />
+                            <Tab label="Liked" value="2" />
                         </TabList>
                     </Box>
                     <TabPanel value="1">

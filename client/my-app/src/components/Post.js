@@ -7,32 +7,16 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { UserContext } from "../components/UserContext";
-import CssBaseline from '@mui/material/CssBaseline';
-import BottomNavigation from '@mui/material/BottomNavigation';
-import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import Logo from "../images/WISRR_Logo_Square.jpeg"
-import Paper from '@mui/material/Paper';
-import RestoreIcon from '@mui/icons-material/Restore';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import EmojiObjectsRoundedIcon from '@mui/icons-material/EmojiObjectsRounded';
-import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
-import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Stack from "@mui/material/Stack";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea, CardActions } from '@mui/material';
-import { Select } from '@mui/material';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -63,6 +47,7 @@ const Post = (props) => {
     const [commentDes, setCommentDes] = useState([]);
     const [commentPos, setCommentPos] = useState("");
     const [open, setOpen] = useState(false);
+    const [likeCount, setLikeCount] = useState(props.likeCount);
 
     const handleClose = () => {
         setOpen(false);
@@ -138,18 +123,35 @@ const Post = (props) => {
     }, [])
 
     const likeButtonClick = async () => {
-        const response = await fetch(`http://localhost:3001/like/${postID}`, {
+        // Send like/unlike request
+        const likeResponse = await fetch(`http://localhost:3001/like/${postID}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
-        })
-        const data = await response.json();
-
-        if (response.ok) {
+        });
+    
+        if (likeResponse.ok) {
+            // Toggle like status first
             setLike(!likedPost);
-        }
-        else {
-            console.error('Failed to like the post');
+    
+            // Fetch the post by ID to get the updated like count
+            const postResponse = await fetch(`http://localhost:3001/post/${postID}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            const postData = await postResponse.json();
+    
+            if (postResponse.ok) {
+                // Update like count in the state
+                setLikeCount(postData.postSpecific.likes); 
+                console.log(postData.postSpecific.likes);
+
+            } else {
+                console.error('Failed to fetch updated post details');
+            }
+        } else {
+            console.error('Failed to like/unlike the post');
         }
     }
 
@@ -286,12 +288,12 @@ const Post = (props) => {
                                     )}
                             </Stack>
                             <Stack direction="row">
-                                <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{date.toLocaleString().substring(0, 10)}</Typography>
                                 {userInfoId == props.authorID && (
                                     <IconButton onClick={deletePost}>
                                         <DeleteIcon />
                                     </IconButton>
                                 )}
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{date.toLocaleString().substring(0, 10)}</Typography>
                             </Stack>
                         </Stack>
                         <Stack direction="row">
@@ -314,7 +316,7 @@ const Post = (props) => {
                                         <FavoriteBorderIcon />
                                     </IconButton>
                                 )}
-                                <p>{props.likeCount}</p>
+                                <p>{likeCount}</p>
                             </Stack>
                             {showComments ? (<IconButton onClick={popComments}>
                                 <ExpandLessIcon />

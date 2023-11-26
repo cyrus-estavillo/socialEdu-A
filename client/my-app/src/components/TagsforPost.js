@@ -52,7 +52,7 @@ const TagsForPost = (props) => {
     return (
         <div>
             {tags.includes(props.tagName) ?
-                (<Chip label={props.tagName} variant="outlined" sx={{ marginRight: 1, backgroundColor: "gray" }} onClick={followTags} />)
+                (<Chip label={props.tagName} variant="outlined" sx={{ marginRight: 1, backgroundColor: "#848884", color: "white" }} onClick={followTags} />)
                 : (<Chip label={props.tagName} variant="outlined" sx={{ marginRight: 1 }} onClick={followTags} />)}
         </div>
     );

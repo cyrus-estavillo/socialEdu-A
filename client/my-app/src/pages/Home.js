@@ -366,38 +366,41 @@ const Home = () => {
                                 )
                                 ))}
                         </TabPanel>
-                        {/*<TabPanel value="3" style={{ overflow: 'auto' }}>
-                            <Dialog
-                                open={open}
-                                onClose={handleClose}>
-                                <DialogTitle sx={{ fontWeight: "bold", textAlign: "center" }}>
-                                    Add a Group Chat!
-                                </DialogTitle>
-                                <DialogContent >
-                                    <TextField sx={{ width: 400 }}
-                                        multiline
-                                        value={groupName}
-                                        onChange={(e) => setGroup(e.target.value)}
-                                    />
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleClose}>Cancel</Button>
-                                    <Button variant="contained" onClick={addGroup}>Post</Button>
-                                </DialogActions>
-                            </Dialog>
-                            <Button variant="contained" onClick={handleOpen}>Add Group</Button>
-                            <h1>My Groups</h1>
-                            {userGroups && (userGroups.map((group) => (
-                                <GroupView groupID={group._id} groupName={group.name} groupMembers={group.members.length} />
-                            ))
-                            )}
-                            <h1>Recommended groups</h1>
-                            {unjoinedGroups && unjoinedGroups.map((group) => (
-                                //userDetails.groups && !userDetails.groups.includes(group._id) && (
-                                <Group groupID={group._id} groupName={group.name} />
-                                //)
-                            ))}
-                            </TabPanel>*/}
+                        {/* Commented out for implementation later
+                        
+                            <TabPanel value="3" style={{ overflow: 'auto' }}>
+                                <Dialog
+                                    open={open}
+                                    onClose={handleClose}>
+                                    <DialogTitle sx={{ fontWeight: "bold", textAlign: "center" }}>
+                                        Add a Group Chat!
+                                    </DialogTitle>
+                                    <DialogContent >
+                                        <TextField sx={{ width: 400 }}
+                                            multiline
+                                            value={groupName}
+                                            onChange={(e) => setGroup(e.target.value)}
+                                        />
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleClose}>Cancel</Button>
+                                        <Button variant="contained" onClick={addGroup}>Post</Button>
+                                    </DialogActions>
+                                </Dialog>
+                                <Button variant="contained" onClick={handleOpen}>Add Group</Button>
+                                <h1>My Groups</h1>
+                                {userGroups && (userGroups.map((group) => (
+                                    <GroupView groupID={group._id} groupName={group.name} groupMembers={group.members.length} />
+                                ))
+                                )}
+                                <h1>Recommended groups</h1>
+                                {unjoinedGroups && unjoinedGroups.map((group) => (
+                                    //userDetails.groups && !userDetails.groups.includes(group._id) && (
+                                    <Group groupID={group._id} groupName={group.name} />
+                                    //)
+                                ))}
+                            </TabPanel>
+                        */}
                     </div>
                 </TabContext>
             </Box>

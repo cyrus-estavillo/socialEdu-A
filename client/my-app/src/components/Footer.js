@@ -137,6 +137,7 @@ const Footer = () => {
                     <TextField
                         multiline
                         value={textVal}
+                        placeholder="Share something with the world..."
                         onChange={(e) => setText(e.target.value)}
                         sx={{
                             width: "100%",
