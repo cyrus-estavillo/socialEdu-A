@@ -14,7 +14,6 @@ import Profile from './pages/Profile';
 import Search from './pages/Search';
 
 
-
 function App() {
   return (
     <div className="App">
@@ -30,7 +29,6 @@ function App() {
             <Route path="/posts/:query" element={<QueryPosts />} />
             <Route path="/notification" element={<Notification />}/>
             <Route path="/profile" element={<Profile />}/>
-            <Route path="/otherProfilePage/:id" element={<OtherProfilePage />}/>
           </Routes>
           <Footer />
         </UserContextProvider>
