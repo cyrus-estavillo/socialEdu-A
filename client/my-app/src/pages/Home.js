@@ -192,8 +192,8 @@ const Home = () => {
                             centered
                         >
                             <Tab label="Following" value="1" />
-                            <Tab label="For You" value="2" sx={{ marginLeft: 16, marginRight: 16 }} />
-                            <Tab label="Community" value="3" />
+                            <Tab label="For You" value="2" sx={{ marginLeft: 16, marginRight: 4 }} />
+                            {/*<Tab label="Community" value="3" />*/}
                         </TabList>
                     </Box>
                     <TabPanel value="1">
