@@ -24,7 +24,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Comment from './Comment';
 import Chip from '@mui/material/Chip';
-import TagsForPost from './TagsforPost';
+
 
 
 const Post = (props) => {
@@ -275,11 +275,7 @@ const Post = (props) => {
                         <Stack direction="row">
                             <Typography variant="body1" gutterBottom>{props.text}</Typography>
                         </Stack>
-                        <Stack direction="row" sx={{ marginTop: 0.5 }}>
-                            {tagList.map((tag) => (
-                                <TagsForPost tagName={tag} />
-                            ))}
-                        </Stack>
+                        
                         <CardActions sx={{ justifyContent: "space-evenly" }}>
                             <IconButton onClick={handleOpen}><ForumOutlinedIcon /></IconButton>
                             <Stack direction="row">
