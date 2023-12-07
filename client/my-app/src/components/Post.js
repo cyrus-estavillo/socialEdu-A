@@ -2,36 +2,21 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import { Button, IconButton } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { UserContext } from "../components/UserContext";
-import CssBaseline from '@mui/material/CssBaseline';
-import BottomNavigation from '@mui/material/BottomNavigation';
-import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import Logo from "../images/WISRR_Logo_Square.jpeg"
-import Paper from '@mui/material/Paper';
-import RestoreIcon from '@mui/icons-material/Restore';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import EmojiObjectsRoundedIcon from '@mui/icons-material/EmojiObjectsRounded';
-import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
-import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Stack from "@mui/material/Stack";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea, CardActions } from '@mui/material';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -39,6 +24,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Comment from './Comment';
 import Chip from '@mui/material/Chip';
+import TagsForPost from './TagsforPost';
 
 
 const Post = (props) => {
@@ -55,11 +41,13 @@ const Post = (props) => {
 
     const tagList = props.tags;
 
+    const [logged, setLogged] = useState();
     const [likedPost, setLike] = useState(false);
     const [showComments, setComments] = useState(false);
     const [commentDes, setCommentDes] = useState([]);
     const [commentPos, setCommentPos] = useState("");
     const [open, setOpen] = useState(false);
+    const [likeCount, setLikeCount] = useState(props.likeCount);
 
     const handleClose = () => {
         setOpen(false);
@@ -72,6 +60,22 @@ const Post = (props) => {
 
     const authorID = props.authorID;
     const postID = props.postID;
+
+    const loggedUser = async () => {
+        const response = await fetch(`http://localhost:3001/user/${userInfoId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            setLogged(data.userSpecific);
+        }
+    }
+
+    useEffect(() => {
+        loggedUser();
+    }, [userInfoId])
 
     const getAllComments = async () => {
         const response = await fetch(`http://localhost:3001/commentsByPost/${postID}`, {
@@ -119,13 +123,34 @@ const Post = (props) => {
     }, [])
 
     const likeButtonClick = async () => {
-        const response = await fetch(`http://localhost:3001/like/${postID}`, {
+        // Send like/unlike request
+        const likeResponse = await fetch(`http://localhost:3001/like/${postID}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
-        })
-        const data = await response.json();
-        window.location.reload();
+        });
+    
+        if (likeResponse.ok) {
+            // Toggle like status first
+            setLike(!likedPost);
+    
+            // Fetch the post by ID to get the updated like count
+            const postResponse = await fetch(`http://localhost:3001/post/${postID}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            const postData = await postResponse.json();
+    
+            if (postResponse.ok) {
+                // Update like count in the state
+                setLikeCount(postData.postSpecific.likes); 
+            } else {
+                console.error('Failed to fetch updated post details');
+            }
+        } else {
+            console.error('Failed to like/unlike the post');
+        }
     }
 
     const getAuthorDetailsOfPost = async () => {
@@ -142,20 +167,42 @@ const Post = (props) => {
         getAuthorDetailsOfPost();
     }, [])
 
+
+
     const postComment = async () => {
-        const response = await fetch(`http://localhost:3001/comment/${postID}`, {
-            method: 'POST',
+        // Fetch the username of the logged-in user
+        const userResponse = await fetch(`http://localhost:3001/user/${userInfoId}`, {
+            method: 'GET',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({
-                text: commentPos
+            credentials: 'include'
+        });
+        const userData = await userResponse.json();
+
+        // Check if the userResponse is ok and userData contains the user object
+        if (userResponse.ok && userData && userData.userSpecific) {
+            const username = userData.userSpecific.username; // Get the username from the user data
+
+            const response = await fetch(`http://localhost:3001/comment/${postID}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    text: `@${username}: ${commentPos}`
+                })
             })
-        })
-        if (response.ok) {
-            handleClose();
-            window.location.reload();
+            if (response.ok) {
+                setComments(true); // Set showComments to true to display the comments
+                setCommentPos(""); // Clear the comment input field
+                handleClose();
+                await getAllComments(); // Refresh comments without reloading the page
+            }
+        }
+        else {
+            // Handle the error if the user data could not be fetched
+            console.error('Failed to fetch user data');
         }
     }
+
 
     const deletePost = async () => {
         const response = await fetch(`http://localhost:3001/post/${postID}`, {
@@ -167,6 +214,23 @@ const Post = (props) => {
             window.location.reload();
         }
     }
+
+    const addToFollowing = async () => {
+        const response = await fetch(`http://localhost:3001/addFollowing/${authorID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (response.ok) {
+            window.location.reload();
+        }
+    }
+
+
+    var date = new Date(props.date);
+
+    const followingList = logged?.following;
 
     return (
         <div>
@@ -188,52 +252,85 @@ const Post = (props) => {
                     <Button variant="contained" onClick={postComment}>Post</Button>
                 </DialogActions>
             </Dialog>
-            <Card sx={{ width: "100%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
-                <CardContent>
-                    <Stack direction="row" justifyContent="space-between">
-                        <Stack direction="row">
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}</Typography>
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "middle" }}>
+                <Card sx={{ width: "100%", height: "100%", borderBottom: "1px solid #d3d3d3" }}>
+                    <CardContent>
+                        <Stack direction="row" justifyContent="space-between">
+                            <Stack direction="row">
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>
+                                <Link to={`/otherProfilePage/${authorID}`}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}
+                                    </Typography>
+                                </Link>
+                                {followingList && (!followingList.includes(authorID) && authorID !== userInfoId)
+                                    && (
+                                        <Chip label="Follow" variant="outlined" onClick={addToFollowing}
+                                            sx={{
+                                                color: "white", backgroundColor: "black", marginLeft: 1,
+                                                '&:hover': {
+                                                    color: "black"
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                {followingList && (followingList.includes(authorID) && authorID !== userInfoId)
+                                    && (
+                                        <Chip label="Following" variant="outlined" onClick={addToFollowing}
+                                            sx={{
+                                                color: "white", backgroundColor: "#3576cb", marginLeft: 1,
+                                                '&:hover': {
+                                                    color: "black"
+                                                    //color: "white"
+                                                }
+                                            }} />
+                                    )}
+                            </Stack>
+                            <Stack direction="row">
+                                {userInfoId == props.authorID && (
+                                    <IconButton onClick={deletePost}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                )}
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{date.toLocaleString().substring(0, 10)}</Typography>
+                            </Stack>
                         </Stack>
-                        {userInfoId == props.authorID && (
-                            <IconButton onClick={deletePost}>
-                                <DeleteIcon />
-                            </IconButton>
-                        )}
-                    </Stack>
-                    <Stack direction="row">
-                        <Typography variant="body1" gutterBottom>{props.text}</Typography>
-                    </Stack>
-                    <Stack direction="row" sx={{ marginTop: 0.5 }}>
-                        {tagList.map((tag) => (
-                            <Chip label={tag} variant="outlined" sx={{ marginRight: 1 }} />
-                        ))}
-                    </Stack>
-                    <CardActions sx={{ justifyContent: "space-evenly" }}>
-                        <IconButton onClick={handleOpen}><ForumOutlinedIcon /></IconButton>
-                        {likedPost ? (
-                            <IconButton onClick={likeButtonClick}>
-                                <FavoriteIcon sx={{ color: "red" }} />
-                            </IconButton>
-                        ) : (
-                            <IconButton onClick={likeButtonClick}>
-                                <FavoriteBorderIcon />
-                            </IconButton>
-                        )}
-                        {showComments ? (<IconButton onClick={popComments}>
-                            <ExpandLessIcon />
-                        </IconButton>) : (<IconButton onClick={popComments}>
-                            <ExpandMoreIcon />
-                        </IconButton>)}
-                    </CardActions>
-                </CardContent>
-            </Card>
-            {showComments && (
-                commentDes.map((com) => (
-                    <Comment text={com.text} author={com.commentAuthor} commentID={com._id} />
-                ))
-            )}
-        </div>
+                        <Stack direction="row">
+                            <Typography variant="body1" gutterBottom>{props.text}</Typography>
+                        </Stack>
+                        <Stack direction="row" sx={{ marginTop: 0.5 }}>
+                            {tagList.map((tag) => (
+                                <TagsForPost tagName={tag} />
+                            ))}
+                        </Stack>
+                        <CardActions sx={{ justifyContent: "space-evenly" }}>
+                            <IconButton onClick={handleOpen}><ForumOutlinedIcon /></IconButton>
+                            <Stack direction="row">
+                                {likedPost ? (
+                                    <IconButton onClick={likeButtonClick}>
+                                        <FavoriteIcon sx={{ color: "red" }} />
+                                    </IconButton>
+                                ) : (
+                                    <IconButton onClick={likeButtonClick}>
+                                        <FavoriteBorderIcon />
+                                    </IconButton>
+                                )}
+                                <p>{likeCount}</p>
+                            </Stack>
+                            {showComments ? (<IconButton onClick={popComments}>
+                                <ExpandLessIcon />
+                            </IconButton>) : (<IconButton onClick={popComments}>
+                                <ExpandMoreIcon />
+                            </IconButton>)}
+                        </CardActions>
+                    </CardContent>
+                </Card>
+                {showComments && (
+                    commentDes.map((com) => (
+                        <Comment text={com.text} author={com.commentAuthor} commentID={com._id} />
+                    ))
+                )}
+            </div>
+        </div >
     )
 }
 

@@ -28,6 +28,7 @@
 
   .white-input .MuiOutlinedInput-root {
     border-color: white !important;
+    margin-bottom: 20px;
   }
   
   /* For the text */
@@ -47,6 +48,11 @@
   
   /* For the outline when focused */
   .white-input .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: white !important;
+  }
+
+  /* For the outline as default */
+  .white-input .MuiOutlinedInput-notchedOutline {
     border-color: white !important;
   }
 

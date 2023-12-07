@@ -40,6 +40,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 const NotifComponent = (props) => {
     const [username, setUsername] = useState("");
+    const [postInfo, setPostInfo] = useState(); 
 
     const getSpecificUser = async () => {
         const response = await fetch(`http://localhost:3001/user/${props.sendingUser}`, {
@@ -54,13 +55,29 @@ const NotifComponent = (props) => {
         }
     }
 
+    const getPostInfo = async () => {
+        const response = await fetch(`http://localhost:3001/post/${props.postID}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if(response.ok) {
+            setPostInfo(data.postSpecific); 
+        }
+    }
+
+    useEffect(() => {
+        getPostInfo(); 
+    }, [])
+
     useEffect(() => {
         getSpecificUser();
     }, [])
 
     return (
         <div>
-            <p>@{username} {props.action} your post {props.postID}</p>
+            <p>@{username} {props.action} your post: "{postInfo?.text}"</p>
         </div>
     );
 }

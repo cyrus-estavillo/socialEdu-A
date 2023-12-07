@@ -4,12 +4,11 @@ const {model, Schema} = mongoose;
 const PostSchema = new Schema({
     text: {type: String, required: true}, 
     author: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-    likes: {type: Number, default: 0},
+    likes: {type: Number, default: 0, min: 0 },
     tags: [{type: String}],
     comment: [{type: Schema.Types.ObjectId, ref: 'Comment'}], 
     date: {type: Date, default: Date.now},  // Stores the current date and time
     timestamp: {type: Number, default: Date.now()}  // Stores the current time in milliseconds
-
 });
 
 const PostModel = new model('Post', PostSchema);

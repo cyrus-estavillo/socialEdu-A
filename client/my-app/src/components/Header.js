@@ -15,6 +15,11 @@ const Header = () => {
     const { userInfo, setUserInfo } = useContext(UserContext);
     const navigate = useNavigate();
 
+    const location = useLocation();
+    const pathname = location.pathname;
+    console.log(pathname);
+
+
     const getProfile = async () => {
         const response = await fetch('http://localhost:3001/profile', {
             method: 'GET',
@@ -29,11 +34,10 @@ const Header = () => {
         getProfile();
     }, []);
 
-    // Add this line to get the current location
-    const location = useLocation();
 
-    if(location.pathname === "/") {
-        return null;  // Don't render anything if on the landing page
+    // Hide header on main page ('/')
+    if (pathname === '/') {
+        return <div></div>;
     }
 
 
@@ -55,7 +59,7 @@ const Header = () => {
     const username = userInfo?.username;
 
     return (
-        <div>
+        <div style={{ zIndex: 1000, position: 'fixed', top: 0, width: '100%', backgroundColor: 'white' }}>
             {!username &&
                 (<div style={{
                     minHeight: "80px", height: "20%", display: "flex",

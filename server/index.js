@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const User = require("./models/User.js");
 const Post = require("./models/Post.js");
 const Comment = require("./models/Comment.js");
+const Group = require("./models/Group.js");
 
 mongoose.connect('mongodb+srv://pranetallu:2LJEQQ8JE7EISp0s@cluster0.fskrd0v.mongodb.net/');
 
@@ -105,13 +106,24 @@ app.get("/user/:id", async (req, res) => {
   }
 })
 
+app.get("/post/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const postSpecific = await Post.findById(id);
+    res.status(201).json({ postSpecific });
+  }
+  catch (e) {
+    res.status(400).json("Error getting the post");
+  }
+})
+
 app.get("/postsForEachUser/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const postLists = await Post.find({author: id});
-    res.status(201).json({postLists}); 
+    const postLists = await Post.find({ author: id });
+    res.status(201).json({ postLists });
   }
-  catch(e) {
+  catch (e) {
     res.status(400).json("Error with getting posts for each user");
   }
 });
@@ -201,10 +213,38 @@ app.get("/userLikedPosts", async (req, res) => {
       try {
         const userSpecific = await User.findById(info.id);
         const userLikedPosts = userSpecific.liked;
+        const postList = await Post.find({ _id: { $in: userLikedPosts } }).sort({ date: -1, timestamp: -1 });
         const result = [];
-        for (var i = 0; i < userLikedPosts.length; i++) {
-          const likedPosts = await Post.findById(userLikedPosts[i]);
-          result.push(likedPosts);
+        for (var i = 0; i < postList.length; i++) {
+          //const likedPosts = await Post.findById(userLikedPosts[i]);
+          result.push(postList[i]);
+        }
+        res.status(201).json({ result });
+      }
+      catch (e) {
+        res.status(400).json("Error with getting the liked posts");
+      }
+    }
+  })
+})
+
+app.get("/userLikedPosts/:id", async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(id);
+        const userLikedPosts = userSpecific.liked;
+        const postList = await Post.find({ _id: { $in: userLikedPosts } }).sort({ date: -1, timestamp: -1 });
+        const result = [];
+        for (var i = 0; i < postList.length; i++) {
+          //const likedPosts = await Post.findById(userLikedPosts[i]);
+          result.push(postList[i]);
         }
         res.status(201).json({ result });
       }
@@ -334,49 +374,6 @@ app.get("/commentsByPost/:id", async (req, res) => {
   }
 })
 
-/*app.post("/comment/:id", async (req, res) => {
-  const { token } = req.cookies;
-  const { id } = req.params;
-  const { text } = req.body;
-
-  jwt.verify(token, secret, {}, async (err, info) => {
-      if (err) {
-          res.status(404).json("User Not Logged in");
-          return;
-      } else {
-          // Step 2.1: Extract tagged usernames from the comment text
-          const regex = /@[a-zA-Z0-9_]+/g;
-          const matches = text.match(regex);
-          const taggedUsernames = matches ? matches.map(match => match.substring(1)) : [];
-
-          // Step 2.2: Convert usernames to user IDs
-          const taggedUsers = await User.find({ username: { $in: taggedUsernames } }).select('_id');
-          const taggedUserIds = taggedUsers.map(user => user._id); // Create array of user IDs that were tagged in comment
-
-          console.log(`Tagged user IDs: ${taggedUserIds}`);
-
-          // Step 2.3: Create the comment with taggedUserIds
-          try {
-              const postSpecific = await Post.findById(id);
-              const commentSpecific = await Comment.create({
-                  text: text,
-                  commentPerson: info.id,
-                  taggedUsers: taggedUserIds  // Array of user IDs that were tagged in comment
-              });
-              postSpecific.comment.push(commentSpecific._id);
-              await postSpecific.save();
-
-              // Step 2.4: Notify tagged users (This could be a separate function)
-              // FIXME: For now, let's just log it
-              console.log(`Notify these user IDs: ${taggedUserIds}`);
-
-              res.status(201).json("Successfully commented");
-          } catch (e) {
-              res.status(400).json("Error with Commenting");
-          }
-      }
-  });
-});*/
 
 app.post("/comment/:id", async (req, res) => {
   const { token } = req.cookies;
@@ -471,7 +468,11 @@ app.post("/addFollowing/:id", async (req, res) => {
           res.status(201).json(`Added to Following ${id}`)
           return;
         }
-        res.status(400).json("Already added following")
+        else {
+          userSpecific.following = userSpecific.following.filter((fID) => fID.toString() !== id);
+          await userSpecific.save();
+          res.status(201).json("Already added following")
+        }
       }
       catch (e) {
         res.status(400).json("Error with Adding Following");
@@ -519,6 +520,27 @@ app.get("/getUserPosts", async (req, res) => {
       try {
         const postLists = await Post.find().sort({ date: -1, timestamp: -1 });
         const userPosts = postLists.filter((post) => post.author.toString() === info.id);
+        res.status(201).json({ userPosts });
+      }
+      catch (e) {
+        res.status(400).json("Could not get user's posts");
+      }
+    }
+  })
+})
+
+app.get("/getUserPosts/:id", async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const postLists = await Post.find().sort({ date: -1, timestamp: -1 });
+        const userPosts = postLists.filter((post) => post.author.toString() === id);
         res.status(201).json({ userPosts });
       }
       catch (e) {
@@ -577,6 +599,28 @@ app.post("/addPreferences", async (req, res) => {
   })
 })
 
+app.put("/editPreferences", async (req, res) => {
+  const { token } = req.cookies;
+  const { preferTags } = req.body;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        userSpecific.preferences = preferTags;
+        await userSpecific.save();
+        res.status(201).json("Successfully edited preferences");
+      }
+      catch (e) {
+        res.status(400).json("Error with Posting Preferences");
+      }
+    }
+  })
+})
+
 app.get("/getRecommendedPosts", async (req, res) => {
   const { token } = req.cookies;
   jwt.verify(token, secret, {}, async (err, info) => {
@@ -587,21 +631,21 @@ app.get("/getRecommendedPosts", async (req, res) => {
     else {
       try {
         const userSpecific = await User.findById(info.id);
-        const userPreferences = userSpecific.preferences; 
-        
+        const userPreferences = userSpecific.preferences;
+
         const postList = await Post.find().sort({ date: -1, timestamp: -1 });
 
         const postRes = []
-        for(var i = 0; i < postList.length; i++) {
-            const tagList = postList[i].tags;
-            for(var j = 0; j < tagList.length; j++) {
-                if(userPreferences.includes(tagList[j])) {
-                  postRes.push(postList[i]);
-                  break;
-                }
+        for (var i = 0; i < postList.length; i++) {
+          const tagList = postList[i].tags;
+          for (var j = 0; j < tagList.length; j++) {
+            if (userPreferences.includes(tagList[j])) {
+              postRes.push(postList[i]);
+              break;
             }
+          }
         }
-        res.status(201).json({postRes}); 
+        res.status(201).json({ postRes });
       }
       catch (e) {
         res.status(400).json("Error with Getting Recommendations");
@@ -663,9 +707,173 @@ app.get('/getPostsByQuery', async (req, res) => {
   }
 });
 
+// Groups
+app.get('/allGroups', async (req, res) => {
+  try {
+    const groupList = await Group.find();
+    res.status(201).json({ groupList });
+  }
+  catch (e) {
+    res.status(400).json("Error with getting groups");
+  }
+})
 
+app.get('/group/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const groupSpecific = await Group.findById(id);
+    res.status(201).json({ groupSpecific });
+  }
+  catch (e) {
+    res.status(400).json("Error with getting group details");
+  }
+})
 
+app.post('/addGroup', async (req, res) => {
+  const { token } = req.cookies;
+  const { name } = req.body;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const groupSpecific = await Group.create({
+          name: name
+        })
+        res.status(201).json({ groupSpecific });
+      }
+      catch (e) {
+        res.status(400).json("Error with creating a group");
+      }
+    }
+  })
+});
 
+app.post('/joinGroup/:id', async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const groupSpecific = await Group.findById(id);
+        const userSpecific = await User.findById(info.id);
+        if (groupSpecific.members.includes(info.id)) {
+          res.status(400).json("Already joined the group");
+          return;
+        }
+        groupSpecific.members.push(info.id);
+        userSpecific.groups.push(groupSpecific._id);
+        await userSpecific.save();
+        await groupSpecific.save();
+        res.status(201).json({ groupSpecific });
+      }
+      catch (e) {
+        res.status(400).json("Error with joining group");
+      }
+    }
+  })
+})
+
+app.get('/groupsperuser', async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        const userGroups = userSpecific.groups;
+        const groupsSpecific = await Group.find({ _id: { $in: userGroups } });
+        res.status(201).json({ groupsSpecific });
+      }
+      catch (e) {
+        res.status(400).json("Error with getting groups for user");
+      }
+    }
+  })
+})
+
+app.get('/unjoinedGroups', async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        const userGroups = userSpecific.groups;
+        const groupsList = await Group.find({ _id: { $nin: userGroups } });
+        res.status(201).json({ groupsList });
+      }
+      catch (e) {
+        res.status(400).json("Error with getting rest of the groups");
+      }
+    }
+  })
+})
+
+app.post('/addMessage/:id', async (req, res) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  const { message } = req.body;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const groupSpecific = await Group.findById(id);
+        groupSpecific.messages.push({
+          content: message,
+          author: info.id
+        });
+        await groupSpecific.save();
+        res.status(201).json({ groupSpecific });
+      }
+      catch (e) {
+        res.status(400).json("Error with sending a message");
+      }
+    }
+  })
+})
+
+app.post('/followTags', async (req, res) => {
+  const { token } = req.cookies;
+  const { tag } = req.body; 
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      res.status(404).json("User Not Logged in");
+      return;
+    }
+    else {
+      try {
+        const userSpecific = await User.findById(info.id);
+        if(userSpecific.preferences.includes(tag)) {
+          userSpecific.preferences = userSpecific.preferences.filter((tags) => tags !== tag);
+        }
+        else {
+          userSpecific.preferences.push(tag);
+        }
+        await userSpecific.save();
+        res.status(201).json("Tag followed/unfollowed"); 
+      }
+      catch (e) {
+        res.status(400).json("Error with following a tag");
+      }
+    }
+  })
+})
 
 app.listen(3001, () => {
   console.log("Server is on port 3001..")
