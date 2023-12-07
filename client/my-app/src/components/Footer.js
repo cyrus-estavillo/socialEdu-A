@@ -17,6 +17,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import BulbIcon from '@mui/icons-material/EmojiObjectsOutlined';
 import EmojiObjectsRoundedIcon from '@mui/icons-material/EmojiObjectsRounded';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
@@ -181,7 +182,7 @@ const Footer = () => {
                     >
                         <BottomNavigationAction href="/home" icon={<HomeRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/search" icon={<SearchRoundedIcon sx={{ color: "white" }} />} />
-                        <BottomNavigationAction onClick={handleOpen} icon={<AddIcon sx={{ color: "white" }} />} />
+                        <BottomNavigationAction onClick={handleOpen} icon={<BulbIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/notification" icon={<NotificationsRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/profile" icon={<AccountCircleRoundedIcon sx={{ color: "white" }} />} />
                     </BottomNavigation>

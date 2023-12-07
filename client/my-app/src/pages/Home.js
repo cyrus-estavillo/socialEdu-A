@@ -300,8 +300,9 @@ const Home = () => {
                             centered
                         >
                             <Tab label="Following" value="1" />
-                            <Tab label="For You" value="2" sx={{ marginLeft: 8, marginRight: 8 }} />
-                            <Tab label="Community" value="3" />
+                            <Tab label="For You" value="2" sx={{ marginLeft: 20, marginRight: 8 }} />
+                            {/* <Tab label="Community" value="3" /> */}
+                            
                         </TabList>
                     </Box>
                     <div style={{
@@ -366,6 +367,7 @@ const Home = () => {
                                 )
                                 ))}
                         </TabPanel>
+                        {/*
                         <TabPanel value="3" style={{ overflow: 'auto' }}>
                             <Dialog
                                 open={open}
@@ -398,6 +400,7 @@ const Home = () => {
                                 //)
                             ))}
                         </TabPanel>
+                        */}
                     </div>
                 </TabContext>
             </Box>
