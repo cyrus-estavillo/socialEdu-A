@@ -181,7 +181,7 @@ const Home = () => {
     })
 
     return (
-        <div style={{ height: "50%", minHeight: "500px", marginBottom: 40 }}>
+        <div style={{ height: "500px", minHeight: "500px", marginBottom: 40 }}>
             <Box sx={{ width: '100%', typography: 'body1' }}>
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -215,8 +215,8 @@ const Home = () => {
                             <Stack direction="row" spacing={1}>
                                 {potentialFollow.map((pot) => (
                                     <FollowingChip id={pot._id} name={pot.name} />
-                                ))}
-                                </Stack>*/}
+                                ))}*/}
+                                </Stack>
                         </TabPanel>
                         <TabPanel value="2" style={{ overflow: 'auto' }}>
                             {userDetails?.preferences.length == 0 && (
@@ -293,7 +293,8 @@ const Home = () => {
                                 ))}
                             </TabPanel>
                         */}
-                    </div>
+                    
+    
 
                 </TabContext>
             </Box>
