@@ -19,7 +19,6 @@ const Header = () => {
     const pathname = location.pathname;
     console.log(pathname);
 
-    
 
     const getProfile = async () => {
         const response = await fetch('http://localhost:3001/profile', {
@@ -34,6 +33,12 @@ const Header = () => {
     useEffect(() => {
         getProfile();
     }, []);
+
+
+    // Hide header on main page ('/')
+    if (pathname === '/') {
+        return <div></div>;
+    }
 
 
     const logout = async () => {
