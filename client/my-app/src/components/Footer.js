@@ -17,7 +17,6 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import BulbIcon from '@mui/icons-material/EmojiObjectsOutlined';
 import EmojiObjectsRoundedIcon from '@mui/icons-material/EmojiObjectsRounded';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
@@ -33,7 +32,6 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
-import AddIcon from '@mui/icons-material/Add';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -138,7 +136,6 @@ const Footer = () => {
                     <TextField
                         multiline
                         value={textVal}
-                        placeholder="Share something with the world..."
                         onChange={(e) => setText(e.target.value)}
                         sx={{
                             width: "100%",
@@ -183,7 +180,7 @@ const Footer = () => {
                     >
                         <BottomNavigationAction href="/home" icon={<HomeRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/search" icon={<SearchRoundedIcon sx={{ color: "white" }} />} />
-                        <BottomNavigationAction onClick={handleOpen} icon={<BulbIcon sx={{ color: "white" }} />} />
+                        <BottomNavigationAction onClick={handleOpen} icon={<EmojiObjectsRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/notification" icon={<NotificationsRoundedIcon sx={{ color: "white" }} />} />
                         <BottomNavigationAction href="/profile" icon={<AccountCircleRoundedIcon sx={{ color: "white" }} />} />
                     </BottomNavigation>
