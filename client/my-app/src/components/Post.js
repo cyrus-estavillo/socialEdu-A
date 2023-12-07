@@ -252,25 +252,7 @@ const Post = (props) => {
                             <Stack direction="row">
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{user.name}</Typography>
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", marginLeft: 1 }}>@{user.username}</Typography>
-                                {followingList && (!followingList.includes(authorID) && authorID !== userInfoId)
-                                    && (
-                                        <Chip label="Follow" variant="outlined" onClick={addToFollowing}
-                                            sx={{ color: "white", backgroundColor: "black", marginLeft: 1, 
-                                            '&:hover': {
-                                                color: "black"
-                                              } }}
-                                        />
-                                    )}
-                                {followingList && (followingList.includes(authorID) && authorID !== userInfoId)
-                                    && (
-                                        <Chip label="Following" variant="outlined" onClick={addToFollowing}
-                                            sx={{ color: "white", backgroundColor: "#3576cb", marginLeft: 1, 
-                                            '&:hover': {
-                                                color: "black"
-                                                //color: "white"
-                                              } 
-                                         }} />
-                                    )}
+                                
                             </Stack>
                             <Stack direction="row">
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>{date.toLocaleString().substring(0, 10)}</Typography>
